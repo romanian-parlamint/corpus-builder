@@ -1,12 +1,12 @@
 """Class for manipulating the list of organizations."""
-from .xmlutils import XmlElements, XmlAttributes
 from datetime import date
+from framework.core.conversion.namedtuples import Event
+from framework.core.conversion.xmlutils import XmlElements, XmlAttributes
 from lxml import etree
 from typing import Generator
 from typing import List
 from typing import Tuple
 import logging
-from .namedtuples import Event
 
 
 class OrganizationsListManipulator:

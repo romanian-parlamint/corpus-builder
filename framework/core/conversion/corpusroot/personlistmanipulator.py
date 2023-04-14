@@ -1,7 +1,7 @@
 """Class for manipulating person elements."""
+from framework.core.conversion.namedtuples import Event, PersonalInformation
+from framework.core.conversion.xmlutils import XmlElements, XmlAttributes
 from lxml import etree
-from .xmlutils import XmlElements, XmlAttributes
-from .namedtuples import Event, PersonalInformation
 from typing import List
 
 
