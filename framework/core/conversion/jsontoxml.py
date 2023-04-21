@@ -1,16 +1,16 @@
 """Module responsible for conversion from JSON to  XML."""
 import logging
 from .jsonutils import SessionTranscript
-from .sessionxmlcreation import SessionIdBuilder
-from .sessionxmlcreation import SessionTitleBuilder
-from .sessionxmlcreation import MeetingElementContentsBuilder
-from .sessionxmlcreation import SessionIdNoBuilder
-from .sessionxmlcreation import SessionDateBuilder
-from .sessionxmlcreation import SessionSummaryBuilder
-from .sessionxmlcreation import SessionHeadingBuilder
-from .sessionxmlcreation import SessionStartEndTimeBuilder
-from .sessionxmlcreation import SessionChairmenBuilder
-from .sessionxmlcreation import SessionBodyBuilder
+from framework.core.conversion.sessions.sessionidbuilder import SessionIdBuilder
+from framework.core.conversion.sessions.sessiontitlebuilder import SessionTitleBuilder
+from framework.core.conversion.sessions.meetingelementcontentsbuilder import MeetingElementContentsBuilder
+from framework.core.conversion.sessions.sessionidnobuilder import SessionIdNoBuilder
+from framework.core.conversion.sessions.sessiondatebuilder import SessionDateBuilder
+from framework.core.conversion.sessions.sessionsummarybuilder import SessionSummaryBuilder
+from framework.core.conversion.sessions.sessionheadingbuilder import SessionHeadingBuilder
+from framework.core.conversion.sessions.sessionstartendtimebuilder import SessionStartEndTimeBuilder
+from framework.core.conversion.sessions.sessionchairmenbuilder import SessionChairmenBuilder
+from framework.core.conversion.sessions.sessionbodybuilder import SessionBodyBuilder
 from .xmlstats import SessionStatsCalculator
 from .xmlstats import SessionStatsWriter
 from .namemapping import SpeakerInfoProvider
