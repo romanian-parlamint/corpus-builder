@@ -1,7 +1,7 @@
 """Class for manipulating the list of organizations."""
 from datetime import date
 from framework.core.conversion.namedtuples import Event
-from framework.core.conversion.xmlutils import XmlElements, XmlAttributes
+from framework.core.conversion.xmlutils import XmlElements, XmlAttributes, OrganizationRoles
 from lxml import etree
 from typing import Generator
 from typing import List
@@ -37,7 +37,7 @@ class OrganizationsListManipulator:
         """ ""
         if self.__parliament_org is None:
             self.__parliament_org = self.__get_organization_with_role(
-                "parliament")
+                OrganizationRoles.Parliament)
         return self.__parliament_org
 
     @property
@@ -47,11 +47,11 @@ class OrganizationsListManipulator:
         Returns
         -------
         parliament: etree.Element,
-            The organization with role==parliament.
+            The organization with role==government.
         """ ""
         if self.__government_org is None:
             self.__government_org = self.__get_organization_with_role(
-                "government")
+                OrganizationRoles.Government)
         return self.__government_org
 
     @property

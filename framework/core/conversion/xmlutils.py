@@ -95,6 +95,13 @@ class Resources:
     NumWordsEn = "{} words"
 
 
+class OrganizationRoles:
+    """Constants for organization roles."""
+
+    Parliament = "parliament"
+    Government = "parliament"
+
+
 def load_xml(file_name):
     """Load the specified XML file.
 
