@@ -1,13 +1,14 @@
 """Module responsible for statistics counts in session transcripts and root corpus file."""
-from typing import List
-from typing import Dict
-from typing import Callable
-from lxml import etree
-from .xmlutils import XmlDataManipulator
-from .xmlutils import XmlAttributes
-from .xmlutils import XmlElements
-from .xmlutils import Resources
 from datetime import datetime
+from framework.core.conversion.xmlutils import Languages
+from framework.core.conversion.xmlutils import Resources
+from framework.core.conversion.xmlutils import XmlAttributes
+from framework.core.conversion.xmlutils import XmlDataManipulator
+from framework.core.conversion.xmlutils import XmlElements
+from lxml import etree
+from typing import Callable
+from typing import Dict
+from typing import List
 
 
 class SessionStatsCalculator(XmlDataManipulator):
@@ -130,9 +131,9 @@ class SessionStatsWriter(XmlDataManipulator):
             qty = num_speeches if unit == 'speeches' else num_words
             m.set(XmlAttributes.quantity, str(qty))
             if unit == 'speeches':
-                txt = Resources.NumSpeechesRo if lang == 'ro' else Resources.NumSpeechesEn
+                txt = Resources.NumSpeechesRo if lang == Languages.Romanian else Resources.NumSpeechesEn
             else:
-                txt = Resources.NumWordsRo if lang == 'ro' else Resources.NumWordsEn
+                txt = Resources.NumWordsRo if lang == Languages.Romanian else Resources.NumWordsEn
             m.text = txt.format(qty)
 
 
@@ -200,7 +201,7 @@ class SessionStatsReader(XmlDataManipulator):
             tag_counts[tag_type] = num_occurences
         return tag_counts
 
-    def __get_measure(self, unit: str, lang: str = "ro") -> int:
+    def __get_measure(self, unit: str, lang: str = Languages.Romanian) -> int:
         """Get the value of a measure element with the specified unit and language.
 
         Parameters
@@ -263,9 +264,9 @@ class CorpusStatsWriter:
 
             m.set(XmlAttributes.quantity, str(quantity))
             if unit == 'speeches':
-                txt = Resources.NumSpeechesRo if lang == 'ro' else Resources.NumSpeechesEn
+                txt = Resources.NumSpeechesRo if lang == Languages.Romanian else Resources.NumSpeechesEn
             else:
-                txt = Resources.NumWordsRo if lang == 'ro' else Resources.NumWordsEn
+                txt = Resources.NumWordsRo if lang == Languages.Romanian else Resources.NumWordsEn
             m.text = txt.format(quantity)
 
     def __update_tag_usage(self):

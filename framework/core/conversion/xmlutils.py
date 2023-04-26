@@ -102,6 +102,13 @@ class OrganizationRoles:
     Government = "parliament"
 
 
+class Languages:
+    """Constants for languages."""
+
+    Romanian = "ro"
+    English = "en"
+
+
 def load_xml(file_name):
     """Load the specified XML file.
 

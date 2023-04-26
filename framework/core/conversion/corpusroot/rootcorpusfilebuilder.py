@@ -1,17 +1,18 @@
 """Defines a class that builds the root file of the corpus."""
-from framework.core.conversion.namedtuples import PersonalInformation
-from framework.core.conversion.namemapping import SpeakerInfoProvider
+from babel.dates import format_date
+from datetime import datetime
 from framework.core.conversion.corpusroot.organizationslistmanipulator import OrganizationsListManipulator
 from framework.core.conversion.corpusroot.personlistmanipulator import PersonListManipulator
 from framework.core.conversion.corpusroot.sessionspeakersreader import SessionSpeakersReader
+from framework.core.conversion.namedtuples import PersonalInformation
+from framework.core.conversion.namemapping import SpeakerInfoProvider
 from framework.core.conversion.xmlstats import CorpusStatsWriter
 from framework.core.conversion.xmlstats import SessionStatsReader
+from framework.core.conversion.xmlutils import Languages
 from framework.core.conversion.xmlutils import Resources
 from framework.core.conversion.xmlutils import XmlAttributes
 from framework.core.conversion.xmlutils import XmlDataManipulator
 from framework.core.conversion.xmlutils import XmlElements
-from babel.dates import format_date
-from datetime import datetime
 from lxml import etree
 from pathlib import Path
 
@@ -153,7 +154,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
             if title_type != 'sub':
                 continue
             lang = title.get(XmlAttributes.lang)
-            text = Resources.CorpusSubtitleEn if lang == 'en' else Resources.CorpusSubtitleRo
+            text = Resources.CorpusSubtitleEn if lang == Languages.English else Resources.CorpusSubtitleRo
             title.text = text.format(start_date, end_date)
 
     def __update_span_for_element(
