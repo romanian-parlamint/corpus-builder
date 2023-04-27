@@ -44,6 +44,7 @@ class XmlElements:
     pc = '{http://www.tei-c.org/ns/1.0}pc'
     linkGrp = '{http://www.tei-c.org/ns/1.0}linkGrp'
     link = '{http://www.tei-c.org/ns/1.0}link'
+    label = '{http://www.tei-c.org/ns/1.0}label'
 
 
 class XmlAttributes:
@@ -93,6 +94,8 @@ class Resources:
     NumSpeechesEn = "{} speeches"
     NumWordsRo = "{} cuvinte"
     NumWordsEn = "{} words"
+    RegularSession = "Sesiunea ordinară"
+    ExtraordinarySession = "Sesiunea extraordinară"
 
 
 class OrganizationRoles:
@@ -107,6 +110,14 @@ class Languages:
 
     Romanian = "ro"
     English = "en"
+
+
+class Taxonomy:
+    """Defines constants for taxonomy terms.""" ""
+
+    Term = '#parla.term'
+    Session = '#parla.session'
+    Sitting = '#parla.sitting'
 
 
 def load_xml(file_name):

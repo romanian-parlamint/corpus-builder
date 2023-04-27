@@ -5,3 +5,7 @@ Event = namedtuple('Event', ['org_id', 'event_id', 'start_date', 'end_date'])
 
 PersonalInformation = namedtuple(
     'PersonalInformation', ["first_name", "last_name", "sex", "profile_image"])
+
+LegislativeTerm = namedtuple(
+    'LegislativeTerm',
+    ['term_id', 'number', 'start_date', 'end_date', 'description'])

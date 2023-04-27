@@ -2,10 +2,11 @@
 """Build ParlaMint-RO corpus by converting sessions into XML format."""
 from argparse import Namespace, ArgumentParser
 from ast import literal_eval
+from framework.core.conversion.corpusroot.legislativetermsreader import LegislativeTermsReader
+from framework.core.conversion.corpusroot.rootcorpusfilebuilder import RootCorpusFileBuilder
 from framework.core.conversion.jsontoxml import SessionTranscriptConverter
 from framework.core.conversion.namemapping import SpeakerInfo
 from framework.core.conversion.namemapping import SpeakerInfoProvider
-from framework.core.conversion.corpusroot.rootcorpusfilebuilder import RootCorpusFileBuilder
 from framework.utils.loggingutils import configure_logging
 from pathlib import Path
 from typing import Dict
@@ -141,12 +142,15 @@ def main(args):
                                          speaker_info_provider)
     total, processed, failed = 0, 0, 0
     sample_size = args.sample_size if args.build_sample else None
+    legislative_terms = LegislativeTermsReader(
+        root_builder.xml_root).get_legislative_terms()
     for f in iter_files(args.input_directory, max_files=sample_size):
         total = total + 1
         try:
             output_file = build_output_file_path(f, str(output_dir))
             converter = SessionTranscriptConverter(f, args.session_template,
                                                    speaker_info_provider,
+                                                   legislative_terms,
                                                    output_file)
             converter.covert(args.build_sample)
             root_builder.add_corpus_file(output_file)

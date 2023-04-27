@@ -1,19 +1,21 @@
 """Module responsible for conversion from JSON to  XML."""
-import logging
 from .jsonutils import SessionTranscript
-from framework.core.conversion.sessions.sessionidbuilder import SessionIdBuilder
-from framework.core.conversion.sessions.sessiontitlebuilder import SessionTitleBuilder
-from framework.core.conversion.sessions.meetingelementcontentsbuilder import MeetingElementContentsBuilder
-from framework.core.conversion.sessions.sessionidnobuilder import SessionIdNoBuilder
-from framework.core.conversion.sessions.sessiondatebuilder import SessionDateBuilder
-from framework.core.conversion.sessions.sessionsummarybuilder import SessionSummaryBuilder
-from framework.core.conversion.sessions.sessionheadingbuilder import SessionHeadingBuilder
-from framework.core.conversion.sessions.sessionstartendtimebuilder import SessionStartEndTimeBuilder
-from framework.core.conversion.sessions.sessionchairmenbuilder import SessionChairmenBuilder
-from framework.core.conversion.sessions.sessionbodybuilder import SessionBodyBuilder
+from .namemapping import SpeakerInfoProvider
 from .xmlstats import SessionStatsCalculator
 from .xmlstats import SessionStatsWriter
-from .namemapping import SpeakerInfoProvider
+from framework.core.conversion.namedtuples import LegislativeTerm
+from framework.core.conversion.sessions.meetingelementcontentsbuilder import MeetingElementContentsBuilder
+from framework.core.conversion.sessions.sessionbodybuilder import SessionBodyBuilder
+from framework.core.conversion.sessions.sessionchairmenbuilder import SessionChairmenBuilder
+from framework.core.conversion.sessions.sessiondatebuilder import SessionDateBuilder
+from framework.core.conversion.sessions.sessionheadingbuilder import SessionHeadingBuilder
+from framework.core.conversion.sessions.sessionidbuilder import SessionIdBuilder
+from framework.core.conversion.sessions.sessionidnobuilder import SessionIdNoBuilder
+from framework.core.conversion.sessions.sessionstartendtimebuilder import SessionStartEndTimeBuilder
+from framework.core.conversion.sessions.sessionsummarybuilder import SessionSummaryBuilder
+from framework.core.conversion.sessions.sessiontitlebuilder import SessionTitleBuilder
+from typing import List
+import logging
 import spacy
 
 nlp_pipeline = spacy.load('ro_core_news_lg')
@@ -23,7 +25,8 @@ class SessionTranscriptConverter:
     """Convert session transcript from JSON to XML."""
 
     def __init__(self, input_file: str, session_template: str,
-                 speaker_info_provider: SpeakerInfoProvider, output_file: str):
+                 speaker_info_provider: SpeakerInfoProvider,
+                 legislative_terms: List[LegislativeTerm], output_file: str):
         """Create a new instance of the class.
 
         Parameters
@@ -34,12 +37,15 @@ class SessionTranscriptConverter:
             The path of the XML file containing session template.
         speaker_info_provider: SpeakerInfoProvider, required
             The instance of SpeakerInfoProvider used to get speaker data.
+        legislative_terms: list of LegislativeTerm, required
+            The list of legislative terms.
         output_file: str, required
             The path of the output file.
         """
         self.__input_file = input_file
         self.__session_template = session_template
         self.__speaker_info_provider = speaker_info_provider
+        self.__legislative_terms = legislative_terms
         self.__output_file = output_file
 
     def covert(self, is_sample: bool = False):
@@ -182,6 +188,7 @@ class SessionTranscriptConverter:
             The session transcript.
         """
         builder = MeetingElementContentsBuilder(session_transcript,
+                                                self.__legislative_terms,
                                                 self.__output_file)
         builder.build_meeting_info()
 
