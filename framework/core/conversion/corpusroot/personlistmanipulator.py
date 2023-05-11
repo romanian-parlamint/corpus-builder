@@ -57,13 +57,8 @@ class PersonListManipulator:
             if element.tag != XmlElements.person:
                 return ''
 
-            full_name = []
-            for surname in element.iterdescendants(tag=XmlElements.surname):
-                full_name.append(surname.text)
-            for forename in element.iterdescendants(tag=XmlElements.forename):
-                full_name.append(forename.text)
-
-            return ' '.join(full_name)
+            person_id = element.get(XmlAttributes.xml_id)
+            return person_id if person_id is not None else ''
 
         self.__persons_list[:] = sorted(self.__persons_list,
                                         key=get_person_sort_key)
