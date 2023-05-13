@@ -1,7 +1,7 @@
 """Defines a class for building the notes that contain start/end time of the session."""
 from framework.core.conversion.sessions.debatesectionbuilder import DebateSectionBuilder
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlElements
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 
 

@@ -1,8 +1,8 @@
 """Defines a class for building the debate section."""
 from framework.core.conversion.jsonutils import SessionTranscript
 from framework.core.conversion.sessions.jsontranscripttoxmlconverter import JsonTranscriptToXmlConverter
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlElements
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 
 

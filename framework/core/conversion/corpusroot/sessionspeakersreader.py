@@ -1,6 +1,6 @@
 """Class for reading session speakers."""
-from framework.core.conversion.xmlutils import XmlDataManipulator
-from framework.core.conversion.xmlutils import XmlElements, XmlAttributes
+from framework.core.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlElements, XmlAttributes
 from datetime import datetime
 from lxml import etree
 from typing import List

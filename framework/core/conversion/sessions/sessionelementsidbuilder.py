@@ -1,5 +1,5 @@
 """Defines a class that builds the ids of the XML elements."""
-from framework.core.conversion.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlAttributes
 from lxml import etree
 
 

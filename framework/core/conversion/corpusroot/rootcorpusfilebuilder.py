@@ -8,11 +8,11 @@ from framework.core.conversion.namedtuples import PersonalInformation
 from framework.core.conversion.namemapping import SpeakerInfoProvider
 from framework.core.conversion.xmlstats import CorpusStatsWriter
 from framework.core.conversion.xmlstats import SessionStatsReader
-from framework.core.conversion.xmlutils import Languages
-from framework.core.conversion.xmlutils import Resources
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlDataManipulator
-from framework.core.conversion.xmlutils import XmlElements
+from framework.core.xmlutils import Languages
+from framework.core.xmlutils import Resources
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 from pathlib import Path
 

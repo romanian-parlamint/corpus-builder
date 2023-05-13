@@ -1,6 +1,6 @@
 """Defines a class for converting JSON transcript to XML."""
 from framework.core.conversion.jsonutils import SessionTranscript
-from framework.core.conversion.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlDataManipulator
 
 
 class JsonTranscriptToXmlConverter(XmlDataManipulator):

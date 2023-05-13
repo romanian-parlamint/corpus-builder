@@ -1,9 +1,9 @@
 """Defines a class for building session summary."""
 from babel.dates import format_date
 from framework.core.conversion.sessions.debatesectionbuilder import DebateSectionBuilder
-from framework.core.conversion.xmlutils import Resources
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlElements
+from framework.core.xmlutils import Resources
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 
 

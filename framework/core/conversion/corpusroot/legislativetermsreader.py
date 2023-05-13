@@ -2,10 +2,10 @@
 
 from datetime import date
 from framework.core.conversion.namedtuples import LegislativeTerm
-from framework.core.conversion.xmlutils import Languages
-from framework.core.conversion.xmlutils import OrganizationRoles
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlElements
+from framework.core.xmlutils import Languages
+from framework.core.xmlutils import OrganizationRoles
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 from typing import Generator
 from typing import List

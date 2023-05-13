@@ -1,7 +1,7 @@
 """Defines the class for building the session id."""
 from framework.core.conversion.jsonutils import SessionTranscript
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlDataManipulator
 
 
 class SessionIdBuilder(XmlDataManipulator):

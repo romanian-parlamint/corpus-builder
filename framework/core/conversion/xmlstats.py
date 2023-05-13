@@ -1,10 +1,10 @@
 """Module responsible for statistics counts in session transcripts and root corpus file."""
 from datetime import datetime
-from framework.core.conversion.xmlutils import Languages
-from framework.core.conversion.xmlutils import Resources
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlDataManipulator
-from framework.core.conversion.xmlutils import XmlElements
+from framework.core.xmlutils import Languages
+from framework.core.xmlutils import Resources
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 from typing import Callable
 from typing import Dict

@@ -6,8 +6,8 @@ from framework.core.conversion.jsonutils import Speaker
 from framework.core.conversion.namemapping import SpeakerInfoProvider
 from framework.core.conversion.sessions.debatesectionbuilder import DebateSectionBuilder
 from framework.core.conversion.sessions.sessionelementsidbuilder import SessionElementsIdBuilder
-from framework.core.conversion.xmlutils import XmlAttributes
-from framework.core.conversion.xmlutils import XmlElements
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 from typing import List
 import re
