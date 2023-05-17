@@ -6,8 +6,8 @@ from framework.core.conversion.corpusroot.personlistmanipulator import PersonLis
 from framework.core.conversion.corpusroot.sessionspeakersreader import SessionSpeakersReader
 from framework.core.conversion.namedtuples import PersonalInformation
 from framework.core.conversion.namemapping import SpeakerInfoProvider
-from framework.core.conversion.xmlstats import CorpusStatsWriter
-from framework.core.conversion.xmlstats import SessionStatsReader
+from framework.core.xmlstats import CorpusStatsWriter
+from framework.core.xmlstats import SessionStatsReader
 from framework.core.xmlutils import Languages
 from framework.core.xmlutils import Resources
 from framework.core.xmlutils import XmlAttributes
