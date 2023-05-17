@@ -1,9 +1,7 @@
 """Module responsible for conversion from JSON to  XML."""
-from .jsonutils import SessionTranscript
-from .namemapping import SpeakerInfoProvider
-from framework.core.xmlstats import SessionStatsCalculator
-from framework.core.xmlstats import SessionStatsWriter
+from framework.core.conversion.jsonutils import SessionTranscript
 from framework.core.conversion.namedtuples import LegislativeTerm
+from framework.core.conversion.namemapping import SpeakerInfoProvider
 from framework.core.conversion.sessions.meetingelementcontentsbuilder import MeetingElementContentsBuilder
 from framework.core.conversion.sessions.sessionbodybuilder import SessionBodyBuilder
 from framework.core.conversion.sessions.sessionchairmenbuilder import SessionChairmenBuilder
@@ -14,6 +12,9 @@ from framework.core.conversion.sessions.sessionidnobuilder import SessionIdNoBui
 from framework.core.conversion.sessions.sessionstartendtimebuilder import SessionStartEndTimeBuilder
 from framework.core.conversion.sessions.sessionsummarybuilder import SessionSummaryBuilder
 from framework.core.conversion.sessions.sessiontitlebuilder import SessionTitleBuilder
+from framework.core.xmlstats import SessionStatsCalculator
+from framework.core.xmlstats import SessionStatsWriter
+from framework.core.xmlutils import XmlElements
 from typing import List
 import logging
 import spacy
@@ -82,7 +83,19 @@ class SessionTranscriptConverter:
         """
         stats_provider = SessionStatsCalculator(output_file,
                                                 nlp_pipeline.tokenizer)
-        aggregator = SessionStatsWriter(output_file, stats_provider)
+        name_map = {
+            "text": XmlElements.text,
+            "body": XmlElements.body,
+            "div": XmlElements.div,
+            "head": XmlElements.head,
+            "note": XmlElements.note,
+            "u": XmlElements.u,
+            "seg": XmlElements.seg,
+            "kinesic": XmlElements.kinesic,
+            "desc": XmlElements.desc,
+            "gap": XmlElements.gap
+        }
+        aggregator = SessionStatsWriter(output_file, stats_provider, name_map)
         aggregator.update_statistics()
 
     def __build_session_body(self, session_transcript: SessionTranscript):

@@ -77,7 +77,8 @@ class SessionStatsCalculator(XmlDataManipulator):
 class SessionStatsWriter(XmlDataManipulator):
     """Update the values for tags containing session statistics."""
 
-    def __init__(self, xml_file: str, stats_provider: SessionStatsCalculator):
+    def __init__(self, xml_file: str, stats_provider: SessionStatsCalculator,
+                 tag_map: Dict[str, str]):
         """Create a new instance of the class.
 
         Parameters
@@ -86,9 +87,12 @@ class SessionStatsWriter(XmlDataManipulator):
             The path of the XML file for which to update the statistics.
         stats_provider: SessionStatsCalculator, required
             The object that provides the statistics values.
+        tag_map: dictionary of (str, str), required
+            The dictionary that maps the name of the 'gi' attribute to tag names of XML elements.
         """
         XmlDataManipulator.__init__(self, xml_file)
         self.__provider = stats_provider
+        self.__tag_map = tag_map
 
     def update_statistics(self):
         """Update the tagUsage elements."""
@@ -99,21 +103,9 @@ class SessionStatsWriter(XmlDataManipulator):
     def __set_tag_usage(self):
         """Update the values for tagUsage elements."""
         tag_counts = self.__provider.get_tag_counts()
-        name_map = {
-            "text": XmlElements.text,
-            "body": XmlElements.body,
-            "div": XmlElements.div,
-            "head": XmlElements.head,
-            "note": XmlElements.note,
-            "u": XmlElements.u,
-            "seg": XmlElements.seg,
-            "kinesic": XmlElements.kinesic,
-            "desc": XmlElements.desc,
-            "gap": XmlElements.gap
-        }
         for tag_usage in self.xml_root.iterdescendants(
                 tag=XmlElements.tagUsage):
-            tag_name = name_map[tag_usage.get(XmlAttributes.gi)]
+            tag_name = self.__tag_map[tag_usage.get(XmlAttributes.gi)]
             num_occurences = tag_counts[
                 tag_name] if tag_name in tag_counts else 0
             tag_usage.set(XmlAttributes.occurs, str(num_occurences))
