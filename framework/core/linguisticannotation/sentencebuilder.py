@@ -1,6 +1,7 @@
 """Defines class for building sentences."""
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlElements
+from framework.core.linguisticannotation.linkgroupbuilder import LinkGroupBuilder
 from lxml import etree
 from pandas import DataFrame
 from spacy.tokens.span import Span
@@ -36,6 +37,8 @@ class SentenceBuilder:
         s = self.__create_sentence_element()
         for token in sentence.itertuples():
             self.__append_token(s, token)
+        link_builder = LinkGroupBuilder(s)
+        link_builder.build_from(sentence)
 
     def __append_token(self, sentence: etree.Element, token: Tuple[any]):
         """Append the token to the sentence."""
