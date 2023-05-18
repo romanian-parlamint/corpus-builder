@@ -14,7 +14,7 @@ class LinguisticAnnotator:
         self.__nlp_pipeline = init_parser(MODEL, 'spacy')
 
     def annotate(self, sentence: str) -> Tuple[Doc, DataFrame]:
-        """Applies linguistic annotation to the provided sentence.
+        """Apply linguistic annotation to the provided sentence.
 
         Parameters
         ----------
