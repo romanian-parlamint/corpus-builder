@@ -41,7 +41,7 @@ class SentenceBuilder:
         """Append the token to the sentence."""
         element_name = XmlElements.pc if token.UPOS == 'PUNCT' else XmlElements.w
         token_element = etree.SubElement(sentence, element_name)
-        token_id = f'{sentence.get(XmlAttributes.xml_id)}.{token.Index}'
+        token_id = f'{sentence.get(XmlAttributes.xml_id)}.{token.ID}'
         token_element.set(XmlAttributes.xml_id, token_id)
         token_element.text = token.FORM
         if element_name == XmlElements.w:
