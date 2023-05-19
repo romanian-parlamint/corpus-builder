@@ -45,6 +45,7 @@ class XmlElements:
     linkGrp = '{http://www.tei-c.org/ns/1.0}linkGrp'
     link = '{http://www.tei-c.org/ns/1.0}link'
     label = '{http://www.tei-c.org/ns/1.0}label'
+    name = '{http://www.tei-c.org/ns/1.0}name'
 
 
 class XmlAttributes:
