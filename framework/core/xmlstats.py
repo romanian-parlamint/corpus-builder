@@ -11,7 +11,36 @@ from typing import Dict
 from typing import List
 
 
-class SessionStatsCalculator(XmlDataManipulator):
+class XmlTagCounter(XmlDataManipulator):
+    """Counts the occurrences of XML tags."""
+
+    def __init__(self, xml_file: str):
+        """Create a new instance of the class.
+
+        Parameters
+        ----------
+        xml_file: str, required
+            The XML file for which to count tags.
+        """
+        XmlDataManipulator.__init__(self, xml_file)
+
+    def get_tag_counts(self) -> Dict[str, int]:
+        """Compute the number of times each tag appears in the document.
+
+        Returns
+        -------
+        tag_counts: dict of (str, int)
+            A dictionary containing each tag and the number of times it appears in the document.
+        """
+        tag_counts = {}
+        for element in self.xml_root.iterdescendants():
+            tag = str(element.tag)
+            count = tag_counts[tag] if tag in tag_counts else 0
+            tag_counts[tag] = count + 1
+        return tag_counts
+
+
+class SessionStatsCalculator(XmlTagCounter):
     """Calculate the statistics for one session transcript."""
 
     def __init__(self, xml_file: str, word_tokenizer: Callable[[str],
@@ -25,7 +54,7 @@ class SessionStatsCalculator(XmlDataManipulator):
         word_tokenizer: callback, required
             A callback function that accepts a string as input, tokenizes it and returns a list of tokens.
         """
-        XmlDataManipulator.__init__(self, xml_file)
+        XmlTagCounter.__init__(self, xml_file)
         self.__tokenizer = word_tokenizer
 
     def get_num_words(self) -> int:
@@ -58,23 +87,55 @@ class SessionStatsCalculator(XmlDataManipulator):
         num_speeches = len(speeches)
         return num_speeches
 
-    def get_tag_counts(self) -> Dict[str, int]:
-        """Compute the number of times each tag appears in the document.
+
+class XmlTagCountWriter(XmlDataManipulator):
+    """Update the tag counts in the XML file."""
+
+    def __init__(self, xml_file: str, tag_map: Dict[str, str]):
+        """Create a new instance of the class.
+
+        Parameters
+        ----------
+        xml_file: str, required
+            The path of the XML file for which to update the tag counts.
+        tag_map: dictionary of (str, str), required
+            The dictionary that maps the name of the 'gi' attribute to tag names of XML elements.
+        """
+        XmlDataManipulator.__init__(self, xml_file)
+        self.__tag_map = tag_map
+
+    def update_tage_usage(self, tag_counts: Dict[str, int]):
+        """Update the 'tagUsage' elements.
+
+        Parameters
+        ----------
+        tag_counts: dict of (str, int), required
+            The dictionary containing the tag counts.
+        """
+        tag_usage_parent = self.__get_tag_usage_parent()
+        tag_usage_parent.clear()
+        for tag_name in sorted(self.__tag_map.keys()):
+            tag_usage = etree.SubElement(tag_usage_parent,
+                                         XmlElements.tagUsage)
+            tag_usage.set(XmlAttributes.gi, tag_name)
+            tag = self.__tag_map[tag_name]
+            tag_count = tag_counts[tag] if tag in tag_counts else 0
+            tag_usage.set(XmlAttributes.occurs, str(tag_count))
+
+    def __get_tag_usage_parent(self) -> etree.Element:
+        """Get the parent node of the first 'tagUsage' element.
 
         Returns
         -------
-        tag_counts: dict of (str, int)
-            A dictionary containing each tag and the number of times it appears in the document.
+        element: etree.Element
+            The parent element of the first 'tagUsage' element.
         """
-        tag_counts = {}
-        for element in self.xml_root.iterdescendants():
-            tag = str(element.tag)
-            count = tag_counts[tag] if tag in tag_counts else 0
-            tag_counts[tag] = count + 1
-        return tag_counts
+        tag_usage = next(
+            self.xml_root.iterdescendants(tag=XmlElements.tagUsage))
+        return tag_usage.getparent()
 
 
-class SessionStatsWriter(XmlDataManipulator):
+class SessionStatsWriter(XmlTagCountWriter):
     """Update the values for tags containing session statistics."""
 
     def __init__(self, xml_file: str, stats_provider: SessionStatsCalculator,
@@ -90,25 +151,14 @@ class SessionStatsWriter(XmlDataManipulator):
         tag_map: dictionary of (str, str), required
             The dictionary that maps the name of the 'gi' attribute to tag names of XML elements.
         """
-        XmlDataManipulator.__init__(self, xml_file)
+        XmlTagCountWriter.__init__(self, xml_file, tag_map)
         self.__provider = stats_provider
-        self.__tag_map = tag_map
 
     def update_statistics(self):
         """Update the tagUsage elements."""
         self.__set_session_stats()
-        self.__set_tag_usage()
+        self.update_tage_usage(self.__provider.get_tag_counts())
         self.save_changes()
-
-    def __set_tag_usage(self):
-        """Update the values for tagUsage elements."""
-        tag_counts = self.__provider.get_tag_counts()
-        for tag_usage in self.xml_root.iterdescendants(
-                tag=XmlElements.tagUsage):
-            tag_name = self.__tag_map[tag_usage.get(XmlAttributes.gi)]
-            num_occurences = tag_counts[
-                tag_name] if tag_name in tag_counts else 0
-            tag_usage.set(XmlAttributes.occurs, str(num_occurences))
 
     def __set_session_stats(self):
         """Set the values of the session statistics elements."""
