@@ -2,6 +2,7 @@
 """Perform linguistic annotation on the corpus."""
 from argparse import ArgumentParser
 from argparse import Namespace
+from framework.core.linguisticannotation.annotatedrootfilebuilder import AnnotatedRootFileBuilder
 from framework.core.linguisticannotation.componentannotator import CorpusComponentAnnotator
 from framework.core.linguisticannotation.corpusiterator import CorpusIterator
 from framework.core.linguisticannotation.linguisticannotator import LinguisticAnnotator
@@ -39,6 +40,8 @@ def main(corpus_dir: str):
         "u": XmlElements.u,
         "w": XmlElements.w,
     }
+    root_file_builder = AnnotatedRootFileBuilder(iterator.root_file,
+                                                 iterator.annotated_root_file)
     for component_file in iterator.iter_corpus_files():
         annotator = CorpusComponentAnnotator(component_file,
                                              linguistic_annotator)
@@ -47,6 +50,7 @@ def main(corpus_dir: str):
         count_writer = XmlTagCountWriter(component_file, tag_map)
         count_writer.update_tage_usage(counter.get_tag_counts())
         count_writer.save_changes()
+        root_file_builder.add_corpus_file(component_file)
 
 
 def parse_arguments() -> Namespace:

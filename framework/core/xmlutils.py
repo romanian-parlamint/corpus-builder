@@ -46,6 +46,7 @@ class XmlElements:
     link = '{http://www.tei-c.org/ns/1.0}link'
     label = '{http://www.tei-c.org/ns/1.0}label'
     name = '{http://www.tei-c.org/ns/1.0}name'
+    include = '{http://www.w3.org/2001/XInclude}include'
 
 
 class XmlAttributes:
