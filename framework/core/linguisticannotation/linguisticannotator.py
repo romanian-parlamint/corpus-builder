@@ -13,7 +13,7 @@ class LinguisticAnnotator:
         """Create a new instance of the class."""
         self.__nlp_pipeline = init_parser(MODEL, 'spacy')
 
-    def annotate(self, sentence: str) -> Tuple[Doc, DataFrame]:
+    def annotate(self, sentence: str) -> Doc:
         """Apply linguistic annotation to the provided sentence.
 
         Parameters
@@ -23,8 +23,8 @@ class LinguisticAnnotator:
 
         Returns
         -------
-        (doc, conllu): tuple of (Doc, DataFrame)
-            The annotated document and its representation in CoNLL-U format.
+        doc: spacy.tokens.Doc
+            The annotated document.
         """
         doc = self.__nlp_pipeline(sentence)
-        return doc, doc._.conll_pd
+        return doc

@@ -1,7 +1,6 @@
 """Defines a class for annotating component files."""
 from framework.core.linguisticannotation.linguisticannotator import LinguisticAnnotator
 from framework.core.linguisticannotation.sentencebuilder import SentenceBuilder
-from framework.core.linguisticannotation.sentencesplitter import SentenceSplitter
 from framework.core.xmlutils import XmlDataManipulator
 from framework.core.xmlutils import XmlElements
 from pathlib import Path
@@ -11,17 +10,13 @@ import logging
 class CorpusComponentAnnotator(XmlDataManipulator):
     """Applies linguistic annotation to a corpus component file."""
 
-    def __init__(self, component_file: Path,
-                 sentence_splitter: SentenceSplitter,
-                 annotator: LinguisticAnnotator):
+    def __init__(self, component_file: Path, annotator: LinguisticAnnotator):
         """Create a new instance of CorpusComponentAnnotator for the specified file.
 
         Parameters
         ----------
         component_file : pathlib.Path
             The path of the component file.
-        sentence_splitter: SentenceSplitter, required
-            The sentence splitter class.
         annotator: LinguisticAnnotator, required
             The annotator.
         """
@@ -29,7 +24,6 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         XmlDataManipulator.__init__(self, file_name)
         self.__file_name = file_name
         self.__component_file = component_file
-        self.__sentence_splitter = sentence_splitter
         self.__annotator = annotator
         self.__annotated_file = self.__build_output_file_name(
             self.__component_file)
@@ -51,12 +45,11 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         segment : etree.Element, required
             The segment whose text is to be replaced.
         """
-        sentences = self.__sentence_splitter.split(segment.text)
+        doc = self.__annotator.annotate(segment.text)
         segment.text = None
         builder = SentenceBuilder(segment)
-        for sentence in sentences:
-            doc, conllu_df = self.__annotator.annotate(sentence)
-            builder.add_sentence(conllu_df, doc.ents)
+        for sentence in doc.sents:
+            builder.add_sentence(sentence._.conll_pd, sentence.ents)
 
     def __build_output_file_name(self, file_path: Path) -> Path:
         """Build the file name for the annotated component file.
