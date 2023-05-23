@@ -1,6 +1,7 @@
 """Defines a class for iterating corpus files."""
 from pathlib import Path
 from typing import List
+from typing import Generator
 
 
 class CorpusIterator:
@@ -34,7 +35,7 @@ class CorpusIterator:
         self.__annotated_corpus_root_file = self.__corpus_dir / f'{self.__corpus_root_file.stem}.ana.xml'
 
     @property
-    def root_file(self):
+    def root_file(self) -> Path:
         """Get the root file of the corpus.
 
         Returns
@@ -45,7 +46,7 @@ class CorpusIterator:
         return self.__corpus_root_file
 
     @property
-    def annotated_root_file(self):
+    def annotated_root_file(self) -> Path:
         """Get the annotated root file of the corpus.
 
         Returns
@@ -55,7 +56,7 @@ class CorpusIterator:
         """
         return self.__annotated_corpus_root_file
 
-    def iter_corpus_files(self):
+    def iter_corpus_files(self) -> Generator[Path, None, None]:
         """Iterate over corpus files.
 
         Returns
@@ -72,7 +73,7 @@ class CorpusIterator:
                 continue
             yield file_path
 
-    def iter_annotated_files(self):
+    def iter_annotated_files(self) -> Generator[Path, None, None]:
         """Iterate over annotated corpus files.
 
         Returns
@@ -85,7 +86,7 @@ class CorpusIterator:
                 continue
             yield file_path
 
-    def get_component_file_name(self, file_path):
+    def get_component_file_name(self, file_path) -> Path:
         """Get the name of the component file associated with the provided file.
 
         Parameters
@@ -103,7 +104,7 @@ class CorpusIterator:
         component_file = component_file.with_suffix(".xml")
         return component_file
 
-    def _get_file_name_without_extensions(self, file_path):
+    def _get_file_name_without_extensions(self, file_path) -> str:
         """Get the file name by replacing all extensions with empty strings.
 
         Parameters
