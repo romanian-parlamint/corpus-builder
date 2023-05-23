@@ -7,3 +7,9 @@ SAMPLE_SIZE    = 50
 .PHONY: sample
 sample:
 	$(VENV_PYTHON) build-corpus.py --sample --sample-size $(SAMPLE_SIZE)
+
+# Apply linguistic annotations
+.PHONY: annotations
+annotations:
+	$(VENV_PYTHON) apply-linguistic-annotations.py
+
