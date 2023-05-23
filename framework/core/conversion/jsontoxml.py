@@ -84,16 +84,16 @@ class SessionTranscriptConverter:
         stats_provider = SessionStatsCalculator(output_file,
                                                 nlp_pipeline.tokenizer)
         name_map = {
-            "text": XmlElements.text,
             "body": XmlElements.body,
-            "div": XmlElements.div,
-            "head": XmlElements.head,
-            "note": XmlElements.note,
-            "u": XmlElements.u,
-            "seg": XmlElements.seg,
-            "kinesic": XmlElements.kinesic,
             "desc": XmlElements.desc,
-            "gap": XmlElements.gap
+            "div": XmlElements.div,
+            "gap": XmlElements.gap,
+            "head": XmlElements.head,
+            "kinesic": XmlElements.kinesic,
+            "note": XmlElements.note,
+            "seg": XmlElements.seg,
+            "text": XmlElements.text,
+            "u": XmlElements.u,
         }
         aggregator = SessionStatsWriter(output_file, stats_provider, name_map)
         aggregator.update_statistics()
