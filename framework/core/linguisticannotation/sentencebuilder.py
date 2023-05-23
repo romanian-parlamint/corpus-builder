@@ -9,6 +9,7 @@ from pandas import DataFrame
 from spacy.tokens.span import Span
 from typing import Dict
 from typing import List
+import logging
 
 
 class SentenceBuilder:
@@ -29,7 +30,7 @@ class SentenceBuilder:
         self.__segment = segment
         self.__ne_map = named_entity_map
         self.__sentence_index = 0
-        self.__token_index = 0
+        self.__token_ids = set()
 
     def add_sentence(self, sentence: DataFrame, named_entities: List[Span]):
         """Add the specified sentence to current segment.
@@ -41,6 +42,7 @@ class SentenceBuilder:
         named_entities: list of spacy Span, required
             The named entities of the sentence.
         """
+        self.__token_ids.clear()
         ne_finder = NamedEntityFinder(named_entities)
         s = self.__create_sentence_element()
         named_entity, name_element = None, None
@@ -107,6 +109,11 @@ class SentenceBuilder:
 
         token_element = etree.SubElement(parent, element_name)
         token_id = f'{id_prefix}.{token.ID}'
+        if token_id in self.__token_ids:
+            logging.error("Duplicate token id %s.", token_id)
+        else:
+            self.__token_ids.add(token_id)
+
         token_element.set(XmlAttributes.xml_id, token_id)
         token_element.text = token.FORM
 
@@ -136,5 +143,4 @@ class SentenceBuilder:
     def __get_sentence_index(self) -> int:
         """Return the sentence index and increments the counter."""
         self.__sentence_index += 1
-        self.__token_index = 0
         return self.__sentence_index
