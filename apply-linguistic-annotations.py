@@ -45,12 +45,12 @@ def main(corpus_dir: str):
     for component_file in iterator.iter_corpus_files():
         annotator = CorpusComponentAnnotator(component_file,
                                              linguistic_annotator)
-        annotator.apply_annotation()
-        counter = XmlTagCounter(component_file)
-        count_writer = XmlTagCountWriter(component_file, tag_map)
+        annotated_component_file = annotator.apply_annotation()
+        counter = XmlTagCounter(annotated_component_file)
+        count_writer = XmlTagCountWriter(annotated_component_file, tag_map)
         count_writer.update_tage_usage(counter.get_tag_counts())
         count_writer.save_changes()
-        root_file_builder.add_corpus_file(component_file)
+        root_file_builder.add_corpus_file(annotated_component_file)
 
 
 def parse_arguments() -> Namespace:

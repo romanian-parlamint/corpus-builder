@@ -28,14 +28,21 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         self.__annotated_file = self.__build_output_file_name(
             self.__component_file)
 
-    def apply_annotation(self):
-        """Apply linguistic annotations to the file."""
+    def apply_annotation(self) -> Path:
+        """Apply linguistic annotations to the file.
+
+        Returns
+        -------
+        annotated_file: Path
+            The path of the annotated file.
+        """
         logging.info("Annotating file {}.".format(self.__file_name))
         for seg in self.xml_root.iterdescendants(tag=XmlElements.seg):
             if (seg.text is not None) and (len(seg.text) > 0):
                 self.__replace_segment_text(seg)
 
         self.save_changes(self.__annotated_file)
+        return self.__annotated_file
 
     def __replace_segment_text(self, segment):
         """Replace the text of the specified segment with the provided sentences.
