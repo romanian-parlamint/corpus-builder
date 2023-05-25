@@ -9,10 +9,39 @@ from framework.core.linguisticannotation.linguisticannotator import LinguisticAn
 from framework.core.xmlstats import XmlTagCountWriter
 from framework.core.xmlstats import XmlTagCounter
 from framework.core.xmlutils import XmlElements
+from framework.core.xmlutils import XsiIncludeElementsReader
 from framework.utils.loggingutils import configure_logging
+from typing import List
+from pathlib import Path
 
 
-def main(corpus_dir: str):
+def copy_taxonomy_files(taxonomy_files: List[str],
+                        corpus_directory: str) -> List[Path]:
+    """Copy taxonomy files to corpus directory.
+
+    Parameters
+    ----------
+    taxonomy_files: list of str, required
+        The list of taxonomy file paths to copy to corpus directory.
+    corpus_directory: str, required
+        The path of the corpus directory.
+
+    Returns
+    -------
+    taxonomy_files: list of Path
+        The paths of the taxonomy files within corpus directory.
+    """
+    results = []
+    corpus_dir = Path(corpus_directory)
+    for f in taxonomy_files:
+        source_file = Path(f)
+        destination_file = corpus_dir / source_file.name
+        destination_file.write_text(source_file.read_text())
+        results.append(destination_file)
+    return results
+
+
+def main(corpus_dir: str, root_file: str, taxonomy_files: List[str]):
     """Entry point of the module.
 
     Parameters
@@ -20,7 +49,16 @@ def main(corpus_dir: str):
     corpus_dir: str, required
         The directory containing XML transcript files.
     """
-    iterator = CorpusIterator(corpus_dir)
+    root_file_path = Path(corpus_dir) / root_file
+    common_taxonomies = XsiIncludeElementsReader(
+        root_file_path).get_included_files(XmlElements.classDecl)
+    annotation_taxonomies = copy_taxonomy_files(taxonomy_files, corpus_dir)
+    iterator = CorpusIterator(
+        corpus_dir,
+        root_file=root_file,
+        taxonomy_files=[
+            t.name for t in common_taxonomies + annotation_taxonomies
+        ])
     linguistic_annotator = LinguisticAnnotator()
     tag_map = {
         "body": XmlElements.body,
@@ -40,8 +78,9 @@ def main(corpus_dir: str):
         "u": XmlElements.u,
         "w": XmlElements.w,
     }
-    root_file_builder = AnnotatedRootFileBuilder(iterator.root_file,
-                                                 iterator.annotated_root_file)
+    root_file_builder = AnnotatedRootFileBuilder(
+        iterator.root_file, iterator.annotated_root_file,
+        [f.name for f in annotation_taxonomies])
     for component_file in iterator.iter_corpus_files():
         annotator = CorpusComponentAnnotator(component_file,
                                              linguistic_annotator)
@@ -67,6 +106,17 @@ def parse_arguments() -> Namespace:
         '--corpus-dir',
         help="The directory containing XML session transcriptions.",
         default='corpus/')
+    parser.add_argument('--root-file',
+                        help="The name of the root file of the corpus.",
+                        default="ParlaMint-RO.xml")
+    parser.add_argument(
+        '--taxonomy-files',
+        help="Additional taxonomy files to include in annotated root file.",
+        nargs='+',
+        default=[
+            'data/templates/ParlaMint-taxonomy-UD-SYN.ana.xml',
+            'data/templates/ParlaMint-taxonomy-NER.ana.xml'
+        ])
     parser.add_argument(
         '-l',
         '--log-level',
@@ -79,25 +129,4 @@ def parse_arguments() -> Namespace:
 if __name__ == '__main__':
     args = parse_arguments()
     configure_logging(args.log_level)
-    main(args.corpus_dir)
-
-# text = """Stimaţi colegi,
-# Bună dimineaţa.
-# Începem lucrările noastre de astăzi.
-# Rog şefii grupurilor parlamentare să invite pe colegi în sală şi, până atunci, vă rog să-mi permiteţi să vă informez cu privire la legile depuse la secretarii generali ai Camerei Deputaţilor şi În Lege pentru ratificarea Convenţiei privind accesul la informaţie, participarea publicului la luarea deciziei şi accesul la justiţie în probleme de mediu, semnată la Aarhus la 25 iunie 1998;
-# Lege pentru ratificarea Protocolului de adaptare a aspectectelor instituţionale ale Acordului european instituind o asociere între România, pe de o parte, şi comunităţile europene şi statele membre Lege pentru ratificarea Acordului european asupra transferului responsabilităţii cu privire la refugiaţi, adoptat la Strasbourg la 16 octombrie 1980;
-# Lege pentru ratificarea Acordului privind conservarea păsărilor de apă migratoare african-euroasiatice, adoptat la Haga la 16 iunie 1995;
-# Lege pentru aderarea României la Acordul privind conservarea liliecilor în Europa, adoptat la Londra în 4 decembrie 1991;
-# Lege pentru ratificarea Acordului privind conservarea cetaceelor din Marea Neagră, Marea Mediterană şi din Zona contiguă a Atlanticului, adoptat la Monaco la 24 noiembrie 1996;
-# Lege privind aprobarea Ordonanţei de urgenţă a Guvernului nr.97/1999 pentru modificarea Legii nr.8/1994 privind constituirea şi utilizarea Fondului special pentru dezvoltarea şi modernizarea Lege Lege pentru aprobarea Ordonanţei de urgenţă a Guvernului nr.175/1999 privind înfiinţarea Agenţiei pentru organizarea Centrului Regional pentru Prevenirea şi Combaterea Infracţionalităţii
-# Acestea sunt deci legile în termenul regulamentar şi domnii deputaţi sau senatori care vor să sesizeze Curtea Constituţională pot să o facă."""
-# sentence_splitter = SentenceSplitter()
-# annotator = LinguisticAnnotator()
-# for sentence in sentence_splitter.split(text):
-#     print(sentence)
-#     doc, conll_df = annotator.annotate(sentence)
-#     print("LINGUISTIC ANNOTATION")
-#     print(conll_df)
-#     print("NAMED ENTITY IDENTIFICATION")
-#     for ne_span in doc.ents:
-#         print([token.text for token in ne_span], ne_span.label_)
+    main(args.corpus_dir, args.root_file, args.taxonomy_files)

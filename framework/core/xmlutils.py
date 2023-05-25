@@ -45,6 +45,7 @@ class XmlElements:
     sex = '{http://www.tei-c.org/ns/1.0}sex'
     surname = '{http://www.tei-c.org/ns/1.0}surname'
     tagUsage = '{http://www.tei-c.org/ns/1.0}tagUsage'
+    teiCorpus = '{http://www.tei-c.org/ns/1.0}teiCorpus'
     text = '{http://www.tei-c.org/ns/1.0}text'
     title = '{http://www.tei-c.org/ns/1.0}title'
     titleStmt = '{http://www.tei-c.org/ns/1.0}titleStmt'
