@@ -4,6 +4,7 @@ from framework.core.xmlutils import Languages
 from framework.core.xmlutils import Resources
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlDataReader
 from framework.core.xmlutils import XmlElements
 from lxml import etree
 from typing import Callable
@@ -11,7 +12,7 @@ from typing import Dict
 from typing import List
 
 
-class XmlTagCounter(XmlDataManipulator):
+class XmlTagCounter(XmlDataReader):
     """Counts the occurrences of XML tags."""
 
     def __init__(self, xml_file: str):
@@ -22,7 +23,7 @@ class XmlTagCounter(XmlDataManipulator):
         xml_file: str, required
             The XML file for which to count tags.
         """
-        XmlDataManipulator.__init__(self, xml_file)
+        XmlDataReader.__init__(self, xml_file)
 
     def get_tag_counts(self) -> Dict[str, int]:
         """Compute the number of times each tag appears in the document.
