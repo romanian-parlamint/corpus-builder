@@ -216,3 +216,38 @@ class XmlDataManipulator(XmlDataReader):
         save_xml(self.xml_tree, xml_file)
 
 
+class XsiIncludeElementsReader(XmlDataReader):
+    """Read the include elements from the provided file."""
+
+    def __init__(self, xml_file: str):
+        """Create a new instance of the class.
+
+        Parameters
+        ----------
+        xml_file: str, required
+            The path of the XML file.
+        """
+        XmlDataReader.__init__(self, xml_file)
+
+    def get_included_files(self, parent_element_name) -> List[Path]:
+        """Read included files that are children of the specified element.
+
+        Returns
+        -------
+        included_files: list of Path
+            The list of file paths to include.
+        """
+        parent = None
+        for elem in self.xml_root.iterdescendants(tag=parent_element_name):
+            parent = elem
+            break
+
+        if parent is None:
+            return []
+        xml_file_path = Path(self.xml_file)
+        files = []
+        for elem in parent.iterdescendants(tag=XmlElements.include):
+            included_file = elem.get(XmlAttributes.href)
+            file_path = xml_file_path.parent / included_file
+            files.append(file_path)
+        return files
