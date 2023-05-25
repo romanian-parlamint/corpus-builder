@@ -62,6 +62,7 @@ class XmlAttributes:
     event_start = 'from'
     full = 'full'
     gi = 'gi'
+    href = 'href'
     lang = '{http://www.w3.org/XML/1998/namespace}lang'
     lemma = 'lemma'
     meeting_n = 'n'
