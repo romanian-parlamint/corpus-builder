@@ -7,6 +7,8 @@ from framework.core.conversion.corpusroot.rootcorpusfilebuilder import RootCorpu
 from framework.core.conversion.jsontoxml import SessionTranscriptConverter
 from framework.core.conversion.namemapping import SpeakerInfo
 from framework.core.conversion.namemapping import SpeakerInfoProvider
+from framework.core.xmlutils import XmlElements
+from framework.core.xmlutils import XsiIncludeElementsReader
 from framework.utils.loggingutils import configure_logging
 from pathlib import Path
 from typing import Dict
@@ -127,11 +129,41 @@ def read_name_map(file_path: str) -> Dict[str, str]:
     return name_map
 
 
+def prepare_corpus_directory(corpus_directory: str,
+                             taxonomy_files: List[Path]) -> Path:
+    """Create the corpus directory and copy taxonomy files.
+
+    Parameters
+    ----------
+    corpus_directory: str, required
+        The path of the corpus directory.
+    taxonomy_files: list of Path, required
+        The paths of the taxonomy files to copy to corpus directory.
+
+    Returns
+    -------
+    corpus_dir: Path
+        The path representing the corpus directory.
+    """
+    logging.info("Preparing corpus directory %s.", corpus_directory)
+    corpus_dir = Path(corpus_directory)
+    corpus_dir.mkdir(exist_ok=True, parents=True)
+
+    for taxonomy_file in taxonomy_files:
+        logging.info("Copying taxonomy file %s to %s.", taxonomy_file,
+                     corpus_directory)
+        contents = taxonomy_file.read_text()
+        dest_file = corpus_dir / taxonomy_file.name
+        dest_file.write_text(contents)
+    return corpus_dir
+
+
 def main(args):
     """Entry point of the module."""
-    output_dir = Path(args.output_directory)
-    output_dir.mkdir(exist_ok=True, parents=True)
-
+    taxonomy_files = XsiIncludeElementsReader(
+        args.corpus_root_template).get_included_files(XmlElements.classDecl)
+    output_dir = prepare_corpus_directory(args.output_directory,
+                                          taxonomy_files)
     speaker_info_provider = SpeakerInfoProvider(
         read_name_map(args.speaker_name_map),
         read_personal_information(args.profile_info))
