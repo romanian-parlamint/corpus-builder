@@ -113,7 +113,7 @@ class XmlTagCountWriter(XmlDataManipulator):
             The dictionary containing the tag counts.
         """
         tag_usage_parent = self.__get_tag_usage_parent()
-        tag_usage_parent.clear()
+        self.__remove_tag_usage_elements(tag_usage_parent)
         for tag_name in sorted(self.__tag_map.keys()):
             tag_usage = etree.SubElement(tag_usage_parent,
                                          XmlElements.tagUsage)
@@ -121,6 +121,17 @@ class XmlTagCountWriter(XmlDataManipulator):
             tag = self.__tag_map[tag_name]
             tag_count = tag_counts[tag] if tag in tag_counts else 0
             tag_usage.set(XmlAttributes.occurs, str(tag_count))
+
+    def __remove_tag_usage_elements(self, tag_usage_parent: etree.Element):
+        """Remove the child elements of the specified element.
+
+        Parameters
+        ----------
+        tag_usage_parent: etree.Element, required
+            The element whose child elements to remove.
+        """
+        for tag_usage in tag_usage_parent.findall(XmlElements.tagUsage):
+            tag_usage_parent.remove(tag_usage)
 
     def __get_tag_usage_parent(self) -> etree.Element:
         """Get the parent node of the first 'tagUsage' element.
