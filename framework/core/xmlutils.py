@@ -156,8 +156,8 @@ def save_xml(xml: etree._ElementTree, file_name: str):
               xml_declaration=True)
 
 
-class XmlDataManipulator:
-    """Provide basic abstractions for manipulating a XML file."""
+class XmlDataReader:
+    """Provide basic abstractions for reading a XML file."""
 
     def __init__(self, xml_file: str):
         """Create a new instance of the class.
@@ -171,9 +171,33 @@ class XmlDataManipulator:
         self.__xml_tree = load_xml(xml_file)
 
     @property
+    def xml_file(self) -> str:
+        """Get the XML file."""
+        return self.__xml_file
+
+    @property
+    def xml_tree(self):
+        """Get the XML tree."""
+        return self.__xml_tree
+
+    @property
     def xml_root(self):
         """Get the root node of the XML tree."""
-        return self.__xml_tree.getroot()
+        return self.xml_tree.getroot()
+
+
+class XmlDataManipulator(XmlDataReader):
+    """Provide basic abstractions for manipulating a XML file."""
+
+    def __init__(self, xml_file: str):
+        """Create a new instance of the class.
+
+        Parameters
+        ----------
+        xml_file: str, required
+            The path of the XML file.
+        """
+        XmlDataReader.__init__(self, xml_file)
 
     def save_changes(self, output_file: str = None):
         """Save the changes made to the XML tree.
@@ -184,5 +208,7 @@ class XmlDataManipulator:
             The file where to save the changes.
             If `None` then changes will be saved to the input file.
         """
-        xml_file = output_file if output_file is not None else self.__xml_file
-        save_xml(self.__xml_tree, xml_file)
+        xml_file = output_file if output_file is not None else self.xml_file
+        save_xml(self.xml_tree, xml_file)
+
+
