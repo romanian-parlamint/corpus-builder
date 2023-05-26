@@ -1,5 +1,6 @@
 """Defines a class for building the annotated root file."""
 from framework.core.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlElements
 from lxml import etree
 from pathlib import Path
@@ -22,6 +23,7 @@ class AnnotatedRootFileBuilder(XmlDataManipulator):
         """
         XmlDataManipulator.__init__(self, root_file)
         self.__annotated_root_file = annotated_root_file
+        self.__update_xml_id()
         self.__clean_include_tags()
         self.__add_taxonomy_files(taxonomy_files)
 
@@ -69,3 +71,8 @@ class AnnotatedRootFileBuilder(XmlDataManipulator):
         """Clean the include tags from the XML root."""
         for element in self.xml_root.findall(XmlElements.include):
             self.xml_root.remove(element)
+
+    def __update_xml_id(self):
+        """Update the XML id of the root file."""
+        self.xml_root.set(XmlAttributes.xml_id,
+                          self.__annotated_root_file.stem)
