@@ -102,11 +102,11 @@ class MeetingElementContentsBuilder(JsonTranscriptToXmlConverter):
         analysis_attr = meeting.get(XmlAttributes.ana)
         if is_regular:
             meeting.set(XmlAttributes.ana,
-                        f'{analysis_attr} #parla.session.regular')
+                        f'{analysis_attr} #parla.meeting.regular')
             meeting.text = f'{Resources.RegularSession} {session_number}'
         else:
             meeting.set(XmlAttributes.ana,
-                        f'{analysis_attr} #parla.session.extraordinary')
+                        f'{analysis_attr} #parla.meeting.extraordinary')
             meeting.text = f'{Resources.ExtraordinarySession} {session_number}'
 
     def __get_session_number(
