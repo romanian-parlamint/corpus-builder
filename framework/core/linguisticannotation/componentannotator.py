@@ -1,6 +1,7 @@
 """Defines a class for annotating component files."""
 from framework.core.linguisticannotation.linguisticannotator import LinguisticAnnotator
 from framework.core.linguisticannotation.sentencebuilder import SentenceBuilder
+from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlDataManipulator
 from framework.core.xmlutils import XmlElements
 from pathlib import Path
@@ -27,6 +28,7 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         self.__annotator = annotator
         self.__annotated_file = self.__build_output_file_name(
             self.__component_file)
+        self.__update_component_file_id()
 
     def apply_annotation(self) -> Path:
         """Apply linguistic annotations to the file.
@@ -57,6 +59,10 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         builder = SentenceBuilder(segment)
         for sentence in doc.sents:
             builder.add_sentence(sentence._.conll_pd, sentence.ents)
+
+    def __update_component_file_id(self):
+        """Update the id of the component file."""
+        self.xml_root.set(XmlAttributes.xml_id, self.__annotated_file.stem)
 
     def __build_output_file_name(self, file_path: Path) -> Path:
         """Build the file name for the annotated component file.
