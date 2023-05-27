@@ -2,6 +2,8 @@
 from framework.core.xmlutils import XmlDataManipulator
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlElements
+from framework.core.xmlutils import Languages
+from framework.core.xmlutils import Resources
 from lxml import etree
 from pathlib import Path
 from typing import Iterable
@@ -50,6 +52,29 @@ class AnnotatedRootFileBuilder(XmlDataManipulator):
             self.xml_root.iterdescendants(tag=XmlElements.classDecl))
         for taxonomy_file in taxonomy_files:
             self.__add_include_element(class_decl, taxonomy_file)
+        self.__add_prefix_declarations()
+
+    def __add_prefix_declarations(self):
+        """Add prefix declarations after 'classDecl' element."""
+        class_decl = next(
+            self.xml_root.iterdescendants(tag=XmlElements.classDecl))
+        list_prefix = etree.Element(XmlElements.listPrefixDef)
+        class_decl.addnext(list_prefix)
+        prefix_def = etree.SubElement(list_prefix,
+                                      XmlElements.prefixDef,
+                                      attrib={
+                                          'ident': "ud-syn",
+                                          'matchPattern': "(.+)",
+                                          'replacementPattern': "#$1"
+                                      })
+        p = etree.SubElement(prefix_def,
+                             XmlElements.p,
+                             attrib={XmlAttributes.lang: Languages.Romanian})
+        p.text = Resources.UdSynPrefixRo
+        p = etree.SubElement(prefix_def,
+                             XmlElements.p,
+                             attrib={XmlAttributes.lang: Languages.English})
+        p.text = Resources.UdSynPrefixEn
 
     def __add_include_element(self, parent: etree.Element, file_name: str):
         """Add an `include` element to the parent node with the provided file name.

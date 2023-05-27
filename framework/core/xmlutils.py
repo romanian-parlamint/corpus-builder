@@ -30,15 +30,18 @@ class XmlElements:
     linkGrp = '{http://www.tei-c.org/ns/1.0}linkGrp'
     listOrg = '{http://www.tei-c.org/ns/1.0}listOrg'
     listPerson = '{http://www.tei-c.org/ns/1.0}listPerson'
+    listPrefixDef = '{http://www.tei-c.org/ns/1.0}listPrefixDef'
     measure = '{http://www.tei-c.org/ns/1.0}measure'
     meeting = '{http://www.tei-c.org/ns/1.0}meeting'
     name = '{http://www.tei-c.org/ns/1.0}name'
     note = '{http://www.tei-c.org/ns/1.0}note'
     org = '{http://www.tei-c.org/ns/1.0}org'
     orgName = '{http://www.tei-c.org/ns/1.0}orgName'
+    p = '{http://www.tei-c.org/ns/1.0}p'
     pc = '{http://www.tei-c.org/ns/1.0}pc'
     persName = '{http://www.tei-c.org/ns/1.0}persName'
     person = '{http://www.tei-c.org/ns/1.0}person'
+    prefixDef = '{http://www.tei-c.org/ns/1.0}prefixDef'
     s = '{http://www.tei-c.org/ns/1.0}s'
     seg = '{http://www.tei-c.org/ns/1.0}seg'
     setting = '{http://www.tei-c.org/ns/1.0}setting'
@@ -103,6 +106,8 @@ class Resources:
     NumWordsEn = "{} words"
     RegularSession = "Sesiunea ordinară"
     ExtraordinarySession = "Sesiunea extraordinară"
+    UdSynPrefixRo = "URI-urile private cu acest prefix fac referință la elementele care le dau numele. În acest document, acestea sunt pur și simplu referințe locale la categoriile taxonomice UD-SYN din antetul TEI rădăcină al corpusului."
+    UdSynPrefixEn = "Private URIs with this prefix point to elements giving their name. In this document they are simply local references into the UD-SYN taxonomy categories in the corpus root TEI header."
 
 
 class OrganizationRoles:
