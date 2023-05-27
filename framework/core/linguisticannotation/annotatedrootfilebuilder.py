@@ -11,6 +11,28 @@ from lxml import etree
 from pathlib import Path
 from typing import Iterable
 
+APP_INFO = """
+      <appInfo>
+         <application version="3.4.4" ident="app-spaCy">
+            <label>spaCy</label>
+            <desc xml:lang="en">
+      <ref target="https://spacy.io/">spaCy</ref>: Industrial-Strength Natural Language Processing in Python.</desc>
+         </application>
+         <application version="3.4.0" ident="app-spaCy-ro-core-news-lg">
+            <label>ro_core_news_lg</label>
+            <desc xml:lang="en">
+               <ref target="https://spacy.io/models/ro#ro_core_news_lg">ro_core_news_lg</ref> Romanian pipeline optimized for CPU. Components: tok2vec, tagger, parser, lemmatizer (trainable_lemmatizer), senter, ner, attribute_ruler.
+            </desc>
+         </application>
+         <application version="3.4.0" ident="app-spacy-conll">
+            <label>spaCy conll</label>
+            <desc xml:lang="en">
+               <ref target="https://github.com/BramVanroy/spacy_conll">spaCy conll</ref>: Pipeline component for spaCy (and other spaCy-wrapped parsers such as spacy-stanza and spacy-udpipe) that adds CoNLL-U properties to a Doc and its sentences and tokens. Can also be used as a command-line tool.
+            </desc>
+         </application>
+      </appInfo>
+"""
+
 
 class AnnotatedRootFileBuilder(XmlDataManipulator):
     """Builds the annotated root file."""
@@ -32,6 +54,7 @@ class AnnotatedRootFileBuilder(XmlDataManipulator):
         self.__update_title()
         self.__clean_include_tags()
         self.__add_taxonomy_files(taxonomy_files)
+        self.__add_app_info()
 
     def add_corpus_file(self, corpus_file: Path):
         """Add the specified component file to the root file.
@@ -114,3 +137,10 @@ class AnnotatedRootFileBuilder(XmlDataManipulator):
             title_type = title.get(XmlAttributes.element_type)
             if title_type == TitleTypes.Main:
                 title.text = title.text.replace(SAMPLE_TAG, SAMPLE_TAG_ANA)
+
+    def __add_app_info(self):
+        """Add the 'appInfo' element to the root file."""
+        list_prefix = next(
+            self.xml_root.iterdescendants(tag=XmlElements.listPrefixDef))
+        app_info = etree.fromstring(APP_INFO)
+        list_prefix.addnext(app_info)
