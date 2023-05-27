@@ -65,7 +65,8 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         builder = SentenceBuilder(segment)
         children = []
         if segment.text is not None:
-            sentences = self.__build_sentence_elements(builder, segment.text)
+            sentences = self.__build_sentence_elements(builder,
+                                                       segment.text.strip())
             children.extend(sentences)
             segment.text = None
         # Iterate over children of the segment and annotate tail
@@ -75,7 +76,7 @@ class CorpusComponentAnnotator(XmlDataManipulator):
                 continue
 
             sentences = self.__build_sentence_elements(builder,
-                                                       child_elem.tail)
+                                                       child_elem.tail.strip())
             children.extend(sentences)
             child_elem.tail = None
             segment.remove(child_elem)
@@ -131,7 +132,7 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         segment : etree.Element, required
             The segment whose text is to be replaced.
         """
-        doc = self.__annotator.annotate(segment.text)
+        doc = self.__annotator.annotate(segment.text.strip())
         segment.text = None
         builder = SentenceBuilder(segment)
         for sentence in doc.sents:
