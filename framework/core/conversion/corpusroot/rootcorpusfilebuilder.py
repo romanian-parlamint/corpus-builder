@@ -1,6 +1,7 @@
 """Defines a class that builds the root file of the corpus."""
 from babel.dates import format_date
 from datetime import datetime
+from framework.core.constants import SAMPLE_TAG
 from framework.core.conversion.corpusroot.organizationslistmanipulator import OrganizationsListManipulator
 from framework.core.conversion.corpusroot.personlistmanipulator import PersonListManipulator
 from framework.core.conversion.corpusroot.sessionspeakersreader import SessionSpeakersReader
@@ -10,6 +11,7 @@ from framework.core.xmlstats import CorpusStatsWriter
 from framework.core.xmlstats import SessionStatsReader
 from framework.core.xmlutils import Languages
 from framework.core.xmlutils import Resources
+from framework.core.xmlutils import TitleTypes
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlDataManipulator
 from framework.core.xmlutils import XmlElements
@@ -24,6 +26,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
                  file_path: str,
                  template_file: str,
                  speaker_info_provider: SpeakerInfoProvider,
+                 is_sample: bool,
                  append: bool = False):
         """Create a new instance of the class.
 
@@ -35,6 +38,8 @@ class RootCorpusFileBuilder(XmlDataManipulator):
             The path of the corpus root template file.
         speaker_info_provider: SpeakerInfoProvider, required
             An instance of SpeakerInfoProvider used for filling speaker info.
+        is_sample: bool, required
+            A flag indicating whether the root file is part of a sample or full corpus.
         append: bool, optional
             A flag indicating whether to append to existing file or to start from scratch.
         """
@@ -44,6 +49,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
         self.__speaker_info_provider = speaker_info_provider
         self.__person_list = PersonListManipulator(self.xml_root)
         self.__org_list = OrganizationsListManipulator(self.xml_root)
+        self.__update_corpus_title(is_sample)
 
     def add_corpus_file(self, corpus_file: str):
         """Add the specified file to the corpus root file.
@@ -151,7 +157,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
             self.xml_root.iterdescendants(tag=XmlElements.titleStmt))
         for title in title_stmt.iterdescendants(tag=XmlElements.title):
             title_type = title.get(XmlAttributes.type_)
-            if title_type != 'sub':
+            if title_type != TitleTypes.Subtitle:
                 continue
             lang = title.get(XmlAttributes.lang)
             text = Resources.CorpusSubtitleEn if lang == Languages.English else Resources.CorpusSubtitleRo
@@ -193,3 +199,22 @@ class RootCorpusFileBuilder(XmlDataManipulator):
             date.set(XmlAttributes.event_end,
                      format_date(session_date, "yyyy-MM-dd"))
         return date
+
+    def __update_corpus_title(self, is_sample: bool):
+        """Update the corpus title to include sample tag.
+
+        Parameters
+        ----------
+        is_sample: bool required
+            The flag specifying whether the root file is part of a sample or not.
+        """
+        if not is_sample:
+            return
+
+        title_stmt = next(
+            self.xml_root.iterdescendants(tag=XmlElements.titleStmt))
+        for title in title_stmt.iterdescendants(tag=XmlElements.title):
+            title_type = title.get(XmlAttributes.type_)
+            if title_type != TitleTypes.Main:
+                continue
+            title.text = f'{title.text} {SAMPLE_TAG}'

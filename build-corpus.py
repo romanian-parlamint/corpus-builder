@@ -171,7 +171,8 @@ def main(args):
     root_file_path = str(output_dir / Path("ParlaMint-RO.xml"))
     root_builder = RootCorpusFileBuilder(root_file_path,
                                          args.corpus_root_template,
-                                         speaker_info_provider)
+                                         speaker_info_provider,
+                                         args.build_sample)
     total, processed, failed = 0, 0, 0
     sample_size = args.sample_size if args.build_sample else None
     legislative_terms = LegislativeTermsReader(

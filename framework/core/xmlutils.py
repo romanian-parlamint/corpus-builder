@@ -124,6 +124,13 @@ class Languages:
     English = "en"
 
 
+class TitleTypes:
+    """Constants for title types."""
+
+    Main = 'main'
+    Subtitle = 'sub'
+
+
 class Taxonomy:
     """Defines constants for taxonomy terms.""" ""
 

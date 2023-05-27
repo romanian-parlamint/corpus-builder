@@ -1,9 +1,12 @@
 """Defines a class for building the annotated root file."""
-from framework.core.xmlutils import XmlDataManipulator
-from framework.core.xmlutils import XmlAttributes
-from framework.core.xmlutils import XmlElements
+from framework.core.constants import SAMPLE_TAG
+from framework.core.constants import SAMPLE_TAG_ANA
 from framework.core.xmlutils import Languages
 from framework.core.xmlutils import Resources
+from framework.core.xmlutils import TitleTypes
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlDataManipulator
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 from pathlib import Path
 from typing import Iterable
@@ -26,6 +29,7 @@ class AnnotatedRootFileBuilder(XmlDataManipulator):
         XmlDataManipulator.__init__(self, root_file)
         self.__annotated_root_file = annotated_root_file
         self.__update_xml_id()
+        self.__update_title()
         self.__clean_include_tags()
         self.__add_taxonomy_files(taxonomy_files)
 
@@ -101,3 +105,12 @@ class AnnotatedRootFileBuilder(XmlDataManipulator):
         """Update the XML id of the root file."""
         self.xml_root.set(XmlAttributes.xml_id,
                           self.__annotated_root_file.stem)
+
+    def __update_title(self):
+        """Update the title of the corpus."""
+        title_stmt = next(
+            self.xml_root.iterdescendants(tag=XmlElements.titleStmt))
+        for title in title_stmt.iterdescendants(tag=XmlElements.title):
+            title_type = title.get(XmlAttributes.element_type)
+            if title_type == TitleTypes.Main:
+                title.text = title.text.replace(SAMPLE_TAG, SAMPLE_TAG_ANA)

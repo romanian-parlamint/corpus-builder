@@ -1,9 +1,11 @@
 """Defines a class for building session title."""
 from babel.dates import format_date
+from framework.core.constants import SAMPLE_TAG
 from framework.core.conversion.jsonutils import SessionTranscript
 from framework.core.conversion.sessions.jsontranscripttoxmlconverter import JsonTranscriptToXmlConverter
 from framework.core.xmlutils import Languages
 from framework.core.xmlutils import Resources
+from framework.core.xmlutils import TitleTypes
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlElements
 
@@ -42,20 +44,20 @@ class SessionTitleBuilder(JsonTranscriptToXmlConverter):
 
             title_type = elem.get(XmlAttributes.element_type)
             lang = elem.get(XmlAttributes.lang)
-            if title_type == 'main' and lang == Languages.Romanian:
+            if title_type == TitleTypes.Main and lang == Languages.Romanian:
                 elem.text = Resources.SessionTitleRo.format(ro_date)
                 if add_sample_tag:
-                    elem.text = elem.text + ' [ParlaMint SAMPLE]'
+                    elem.text = f'{elem.text} {SAMPLE_TAG}'
 
-            if title_type == 'main' and lang == Languages.English:
+            if title_type == TitleTypes.Main and lang == Languages.English:
                 elem.text = Resources.SessionTitleEn.format(en_date)
                 if add_sample_tag:
-                    elem.text = elem.text + ' [ParlaMint SAMPLE]'
+                    elem.text = f'{elem.text} {SAMPLE_TAG}'
 
-            if title_type == 'sub' and lang == Languages.Romanian:
+            if title_type == TitleTypes.Subtitle and lang == Languages.Romanian:
                 elem.text = Resources.SessionSubtitleRo.format(ro_date)
 
-            if title_type == 'sub' and lang == Languages.English:
+            if title_type == TitleTypes.Subtitle and lang == Languages.English:
                 elem.text = Resources.SessionSubtitleEn.format(en_date)
 
         self.save_changes()

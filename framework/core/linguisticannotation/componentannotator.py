@@ -1,12 +1,15 @@
 """Defines a class for annotating component files."""
+from framework.core.constants import SAMPLE_TAG
+from framework.core.constants import SAMPLE_TAG_ANA
 from framework.core.linguisticannotation.linguisticannotator import LinguisticAnnotator
 from framework.core.linguisticannotation.sentencebuilder import SentenceBuilder
+from framework.core.xmlutils import TitleTypes
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlDataManipulator
 from framework.core.xmlutils import XmlElements
 from lxml import etree
-from typing import List
 from pathlib import Path
+from typing import List
 import logging
 
 
@@ -31,6 +34,7 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         self.__annotated_file = self.__build_output_file_name(
             self.__component_file)
         self.__update_component_file_id()
+        self.__update_component_title()
 
     def apply_annotation(self) -> Path:
         """Apply linguistic annotations to the file.
@@ -137,6 +141,15 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         builder = SentenceBuilder(segment)
         for sentence in doc.sents:
             builder.add_sentence(sentence._.conll_pd, sentence.ents)
+
+    def __update_component_title(self):
+        """Update the title of the component."""
+        title_stmt = next(
+            self.xml_root.iterdescendants(tag=XmlElements.titleStmt))
+        for title in title_stmt.iterdescendants(tag=XmlElements.title):
+            title_type = title.get(XmlAttributes.element_type)
+            if title_type == TitleTypes.Main:
+                title.text = title.text.replace(SAMPLE_TAG, SAMPLE_TAG_ANA)
 
     def __update_component_file_id(self):
         """Update the id of the component file."""
