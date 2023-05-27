@@ -11,6 +11,7 @@ from framework.core.xmlutils import XmlElements
 from lxml import etree
 from typing import List
 import re
+from framework.core.constants import STR_TRANSLATIONS
 
 
 class SessionBodyBuilder(DebateSectionBuilder):
@@ -79,7 +80,7 @@ class SessionBodyBuilder(DebateSectionBuilder):
         seg = etree.SubElement(utterance, XmlElements.seg)
         seg.set(XmlAttributes.xml_id,
                 self.__element_id_builder.get_segment_id())
-        seg.text = text
+        seg.text = text.translate(STR_TRANSLATIONS)
 
     def __build_complex_segment(self, utterance: etree.Element,
                                 content_line: SessionContentLine):
@@ -104,6 +105,7 @@ class SessionBodyBuilder(DebateSectionBuilder):
         seg = seg + text + '</seg>'
         seg = seg.format(seg_id=self.__element_id_builder.get_segment_id())
         seg = re.sub(r'\s+', ' ', seg)
+        seg = seg.translate(STR_TRANSLATIONS)
 
         utterance.append(etree.fromstring(seg))
 
