@@ -137,11 +137,12 @@ class SentenceBuilder:
         token_element.set(XmlAttributes.pos, token.XPOS)
 
         if token.UPOS is None or len(token.UPOS.strip()) == 0:
-            return
-
-        msd = f'UPosTag={token.UPOS}'
-        if token.FEATS != '_':
-            msd = msd + f'|{token.FEATS}'
+            logging.warning("Found empty UPOS value for token %s.", token)
+            msd = f'UPosTag={token.FEATS}'
+        else:
+            msd = f'UPosTag={token.UPOS}'
+            if token.FEATS != '_':
+                msd = msd + f'|{token.FEATS}'
         token_element.set(XmlAttributes.msd, msd)
 
     def __create_sentence_element(self) -> etree.Element:
