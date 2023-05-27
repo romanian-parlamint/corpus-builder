@@ -2,6 +2,7 @@
 from lxml import etree
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlElements
+from framework.core.constants import UD_SYN_PREFIX
 from pandas import DataFrame
 
 
@@ -31,14 +32,15 @@ class LinkGroupBuilder:
         for token in conllu_sentence.itertuples():
             link = etree.SubElement(linkGrp, XmlElements.link)
             if token.DEPREL == 'ROOT':
-                link.set(XmlAttributes.ana, f'ud-syn:{token.DEPREL.lower()}')
+                link.set(XmlAttributes.ana,
+                         f'{UD_SYN_PREFIX}:{token.DEPREL.lower()}')
                 link.set(XmlAttributes.target,
                          f'#{sentence_id} #{sentence_id}.{token.ID}')
             else:
-                link.set(XmlAttributes.ana, f'ud-syn:{token.DEPREL}')
-                link.set(
-                    XmlAttributes.target,
-                    f'#{sentence_id}.{token.HEAD} #{sentence_id}.{token.ID}')
+                dep_rel = token.DEPREL.replace(":", "_")
+                link.set(XmlAttributes.ana, f'{UD_SYN_PREFIX}:{dep_rel}')
+                target = f'#{sentence_id}.{token.HEAD} #{sentence_id}.{token.ID}'
+                link.set(XmlAttributes.target, target)
 
     def __build_link_group_element(self):
         """Add the `linkGrp` element to the `s` element.
