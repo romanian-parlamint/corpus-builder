@@ -136,7 +136,9 @@ class SentenceBuilder:
             token_element.set(XmlAttributes.lemma, token.LEMMA)
         token_element.set(XmlAttributes.pos, token.XPOS)
 
-        # TODO: Check if token.UPOS is not None
+        if token.UPOS is None or len(token.UPOS.strip()) == 0:
+            return
+
         msd = f'UPosTag={token.UPOS}'
         if token.FEATS != '_':
             msd = msd + f'|{token.FEATS}'
