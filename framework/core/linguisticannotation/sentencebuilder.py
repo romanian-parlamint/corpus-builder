@@ -32,8 +32,9 @@ class SentenceBuilder:
         self.__sentence_index = 0
         self.__token_ids = set()
 
-    def add_sentence(self, sentence: DataFrame, named_entities: List[Span]):
-        """Add the specified sentence to current segment.
+    def build_sentence(self, sentence: DataFrame,
+                       named_entities: List[Span]) -> etree.Element:
+        """Build a sentence element.
 
         Parameters
         ----------
@@ -68,6 +69,20 @@ class SentenceBuilder:
 
         link_builder = LinkGroupBuilder(s)
         link_builder.build_from(sentence)
+        return s
+
+    def add_sentence(self, sentence: DataFrame, named_entities: List[Span]):
+        """Add the specified sentence to current segment.
+
+        Parameters
+        ----------
+        sentence: pandas.DataFrame, required
+            The sentence to add.
+        named_entities: list of spacy Span, required
+            The named entities of the sentence.
+        """
+        s = self.build_sentence(sentence, named_entities)
+        self.__segment.append(s)
 
     def __build_name_element(self, sentence: etree.Element,
                              named_entity_type: str) -> etree.Element:
@@ -121,6 +136,7 @@ class SentenceBuilder:
             token_element.set(XmlAttributes.lemma, token.LEMMA)
         token_element.set(XmlAttributes.pos, token.XPOS)
 
+        # TODO: Check if token.UPOS is not None
         msd = f'UPosTag={token.UPOS}'
         if token.FEATS != '_':
             msd = msd + f'|{token.FEATS}'
@@ -136,7 +152,7 @@ class SentenceBuilder:
         """
         segment_id = self.__segment.get(XmlAttributes.xml_id)
         sentence_id = f'{segment_id}.{self.__get_sentence_index()}'
-        s = etree.SubElement(self.__segment, XmlElements.s)
+        s = etree.Element(XmlElements.s)
         s.set(XmlAttributes.xml_id, sentence_id)
         return s
 

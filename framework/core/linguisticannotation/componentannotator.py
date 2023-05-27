@@ -4,6 +4,8 @@ from framework.core.linguisticannotation.sentencebuilder import SentenceBuilder
 from framework.core.xmlutils import XmlAttributes
 from framework.core.xmlutils import XmlDataManipulator
 from framework.core.xmlutils import XmlElements
+from lxml import etree
+from typing import List
 from pathlib import Path
 import logging
 
@@ -40,13 +42,88 @@ class CorpusComponentAnnotator(XmlDataManipulator):
         """
         logging.info("Annotating file {}.".format(self.__file_name))
         for seg in self.xml_root.iterdescendants(tag=XmlElements.seg):
-            if (seg.text is not None) and (len(seg.text) > 0):
-                self.__replace_segment_text(seg)
+            # If the segment does not have child elements (i.e. has only text)
+            # then we replace the text with annotated sentences; otherwise
+            # we need to replace the text, and the tail of each child element
+            # with annotated sentences.
+            if len(seg) == 0:
+                self.__replace_simple_segment_text(seg)
+            else:
+                self.__replace_complex_segment_text(seg)
 
         self.save_changes(self.__annotated_file)
         return self.__annotated_file
 
-    def __replace_segment_text(self, segment):
+    def __replace_complex_segment_text(self, segment: etree.Element):
+        """Replace the text of a segment containing inner children elements with sentence elements.
+
+        Parameters
+        ----------
+        segment : etree.Element, required
+            The segment whose text is to be replaced.
+        """
+        builder = SentenceBuilder(segment)
+        children = []
+        if segment.text is not None:
+            sentences = self.__build_sentence_elements(builder, segment.text)
+            children.extend(sentences)
+            segment.text = None
+        # Iterate over children of the segment and annotate tail
+        for child_elem in segment:
+            children.append(child_elem)
+            if not self.__has_tail(child_elem):
+                continue
+
+            sentences = self.__build_sentence_elements(builder,
+                                                       child_elem.tail)
+            children.extend(sentences)
+            child_elem.tail = None
+            segment.remove(child_elem)
+
+        for c in children:
+            segment.append(c)
+
+    def __has_tail(self, element: etree.Element) -> bool:
+        """Check if the provided element has tail.
+
+        Parameters
+        ----------
+        element: etree.Element, required
+            The element to check.
+
+        Returns
+        -------
+        has_tail: bool
+            True if element has tail; False otherwise.
+        """
+        if element.tail is None:
+            return False
+        tail = element.tail.strip()
+        return len(tail) > 0
+
+    def __build_sentence_elements(self, builder: SentenceBuilder,
+                                  text: str) -> List[etree.Element]:
+        """Build sentence elements from the provided text.
+
+        Parameters
+        ----------
+        builder: SentenceBuilder, required
+            The builder of sentence elements.
+        text: str, required
+            The text from which to build sentence elements.
+
+        Returns
+        -------
+        sentences: list of etree.Element
+            The list of sentence elements built from the supplied text.
+        """
+        doc = self.__annotator.annotate(text)
+        return [
+            builder.build_sentence(sentence._.conll_pd, sentence.ents)
+            for sentence in doc.sents
+        ]
+
+    def __replace_simple_segment_text(self, segment):
         """Replace the text of the specified segment with the provided sentences.
 
         Parameters
