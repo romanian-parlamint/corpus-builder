@@ -30,7 +30,7 @@ class SessionTranscript:
     @property
     def session_date(self):
         """Get the session date."""
-        session_start = self.__json['start']
+        session_start = self.__json['start'] if 'start' in self.__json else None
         if session_start is None:
             raise ValueError(
                 "Start section of session transcription not found.")
