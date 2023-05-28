@@ -3,6 +3,7 @@ from framework.core.conversion.namedtuples import Event, PersonalInformation
 from framework.core.xmlutils import XmlElements, XmlAttributes
 from lxml import etree
 from typing import List
+import logging
 
 
 class PersonListManipulator:
@@ -108,6 +109,10 @@ class PersonListManipulator:
             The event containing the info for affiliation.
         """
         organization_id, term_id, start_date, end_date = event
+        if term_id is None:
+            logging.error("No value for term id in event %s.", event)
+            return
+
         affiliation = etree.SubElement(person, XmlElements.affiliation)
         affiliation.set(XmlAttributes.ana, term_id)
         affiliation.set(XmlAttributes.ref, organization_id)
