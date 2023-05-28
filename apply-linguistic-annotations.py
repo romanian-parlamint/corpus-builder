@@ -11,8 +11,9 @@ from framework.core.xmlstats import XmlTagCounter
 from framework.core.xmlutils import XmlElements
 from framework.core.xmlutils import XsiIncludeElementsReader
 from framework.utils.loggingutils import configure_logging
-from typing import List
 from pathlib import Path
+from typing import List
+import logging
 
 
 def copy_taxonomy_files(taxonomy_files: List[str],
@@ -81,15 +82,29 @@ def main(corpus_dir: str, root_file: str, taxonomy_files: List[str]):
     root_file_builder = AnnotatedRootFileBuilder(
         iterator.root_file, iterator.annotated_root_file,
         [f.name for f in annotation_taxonomies])
+    total, processed, failed = 0, 0, 0
     for component_file in iterator.iter_corpus_files():
-        annotator = CorpusComponentAnnotator(component_file,
-                                             linguistic_annotator)
-        annotated_component_file = annotator.apply_annotation()
-        counter = XmlTagCounter(annotated_component_file)
-        count_writer = XmlTagCountWriter(annotated_component_file, tag_map)
-        count_writer.update_tage_usage(counter.get_tag_counts())
-        count_writer.save_changes()
-        root_file_builder.add_corpus_file(annotated_component_file)
+        total += 1
+        try:
+            annotator = CorpusComponentAnnotator(component_file,
+                                                 linguistic_annotator)
+            annotated_component_file = annotator.apply_annotation()
+            counter = XmlTagCounter(annotated_component_file)
+            count_writer = XmlTagCountWriter(annotated_component_file, tag_map)
+            count_writer.update_tage_usage(counter.get_tag_counts())
+            count_writer.save_changes()
+            root_file_builder.add_corpus_file(annotated_component_file)
+            processed += 1
+        except Exception as e:
+            failed += 1
+            logging.exception(
+                "Failed to annotate session XML from %s. Exception: %r",
+                component_file, e)
+
+    logging.info("Processed: %s/%s", processed, total)
+    if failed > 0:
+        logging.info("Failed: %s/%s", failed, total)
+    logging.info("That's all folks!")
 
 
 def parse_arguments() -> Namespace:
