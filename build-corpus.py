@@ -37,7 +37,7 @@ def iter_files(directory: str,
     """
     root_path = Path(directory)
     if max_files is None:
-        max_files = sys.maxint
+        max_files = sys.maxsize
     count = 0
     for file_path in root_path.glob('*.json'):
         if count < max_files:
