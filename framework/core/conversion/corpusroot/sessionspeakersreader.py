@@ -68,4 +68,7 @@ class SessionSpeakersReader(XmlDataManipulator):
             return False
         if note.tag != XmlElements.note:
             return False
+        if note.text is None:
+            return False
+
         return 'ministru' in note.text.lower()
