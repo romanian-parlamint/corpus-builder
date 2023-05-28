@@ -15,3 +15,9 @@ sample:
 annotations:
 	$(call apply_annotations)
 
+# Create the corpus
+.PHONY: corpus
+corpus:
+	$(VENV_PYTHON) build-corpus.py
+	$(call apply_annotations)
+
