@@ -1,9 +1,10 @@
 """Defines the class that builds the session body.""" ""
+from framework.core.constants import STR_TRANSLATIONS
 from framework.core.conversion.jsonutils import BodySegment
 from framework.core.conversion.jsonutils import SessionContentLine
 from framework.core.conversion.jsonutils import SessionTranscript
 from framework.core.conversion.jsonutils import Speaker
-from framework.core.conversion.namemapping import SpeakerInfoProvider
+from framework.core.conversion.namemapping.speakerinfoprovider import SpeakerInfoProvider
 from framework.core.conversion.sessions.debatesectionbuilder import DebateSectionBuilder
 from framework.core.conversion.sessions.sessionelementsidbuilder import SessionElementsIdBuilder
 from framework.core.xmlutils import XmlAttributes
@@ -11,7 +12,6 @@ from framework.core.xmlutils import XmlElements
 from lxml import etree
 from typing import List
 import re
-from framework.core.constants import STR_TRANSLATIONS
 
 
 class SessionBodyBuilder(DebateSectionBuilder):

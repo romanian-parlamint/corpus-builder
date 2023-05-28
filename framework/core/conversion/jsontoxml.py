@@ -1,7 +1,7 @@
 """Module responsible for conversion from JSON to  XML."""
 from framework.core.conversion.jsonutils import SessionTranscript
 from framework.core.conversion.namedtuples import LegislativeTerm
-from framework.core.conversion.namemapping import SpeakerInfoProvider
+from framework.core.conversion.namemapping.speakerinfoprovider import SpeakerInfoProvider
 from framework.core.conversion.sessions.meetingelementcontentsbuilder import MeetingElementContentsBuilder
 from framework.core.conversion.sessions.sessionbodybuilder import SessionBodyBuilder
 from framework.core.conversion.sessions.sessionchairmenbuilder import SessionChairmenBuilder

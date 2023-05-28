@@ -6,7 +6,7 @@ from framework.core.conversion.corpusroot.organizationslistmanipulator import Or
 from framework.core.conversion.corpusroot.personlistmanipulator import PersonListManipulator
 from framework.core.conversion.corpusroot.sessionspeakersreader import SessionSpeakersReader
 from framework.core.conversion.namedtuples import PersonalInformation
-from framework.core.conversion.namemapping import SpeakerInfoProvider
+from framework.core.conversion.namemapping.speakerinfoprovider import SpeakerInfoProvider
 from framework.core.xmlstats import CorpusStatsWriter
 from framework.core.xmlstats import SessionStatsReader
 from framework.core.xmlutils import Languages

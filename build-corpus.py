@@ -5,8 +5,8 @@ from ast import literal_eval
 from framework.core.conversion.corpusroot.legislativetermsreader import LegislativeTermsReader
 from framework.core.conversion.corpusroot.rootcorpusfilebuilder import RootCorpusFileBuilder
 from framework.core.conversion.jsontoxml import SessionTranscriptConverter
-from framework.core.conversion.namemapping import SpeakerInfo
-from framework.core.conversion.namemapping import SpeakerInfoProvider
+from framework.core.conversion.namemapping.speakerinfo import SpeakerInfo
+from framework.core.conversion.namemapping.speakerinfoprovider import SpeakerInfoProvider
 from framework.core.xmlutils import XmlElements
 from framework.core.xmlutils import XsiIncludeElementsReader
 from framework.utils.loggingutils import configure_logging
