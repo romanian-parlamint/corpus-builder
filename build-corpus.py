@@ -5,8 +5,10 @@ from ast import literal_eval
 from framework.core.conversion.corpusroot.legislativetermsreader import LegislativeTermsReader
 from framework.core.conversion.corpusroot.rootcorpusfilebuilder import RootCorpusFileBuilder
 from framework.core.conversion.jsontoxml import SessionTranscriptConverter
+from framework.core.conversion.namemapping.namecorrectionsreader import NameCorrectionsReader
 from framework.core.conversion.namemapping.speakerinfo import SpeakerInfo
 from framework.core.conversion.namemapping.speakerinfoprovider import SpeakerInfoProvider
+from framework.core.conversion.namemapping.speakerinforeader import SpeakerInfoReader
 from framework.core.xmlutils import XmlElements
 from framework.core.xmlutils import XsiIncludeElementsReader
 from framework.utils.loggingutils import configure_logging
@@ -111,6 +113,31 @@ def read_personal_information(personal_info_file: str) -> List[SpeakerInfo]:
     return personal_info
 
 
+def build_speaker_info_provider(
+        speaker_name_map: str,
+        speaker_profile_info: str) -> SpeakerInfoProvider:
+    """Build the speaker info provider.
+
+    Parameters
+    ----------
+    speaker_name_map: str, required
+        The path of the CSV file that maps written names to actual names of the speakers.
+    speaker_profile_info: str, required
+        The path of the CSV file containing profile info of the speakers.
+
+    Returns
+    -------
+    speaker_info_provider: SpeakerInfoProvider
+        The speaker info provider.
+    """ ""
+    name_corrections_reader = NameCorrectionsReader()
+    profile_info_reader = SpeakerInfoReader()
+
+    name_corrections = name_corrections_reader.read(speaker_name_map)
+    speaker_info = profile_info_reader.read(speaker_profile_info)
+    return SpeakerInfoProvider(name_corrections, speaker_info)
+
+
 def read_name_map(file_path: str) -> Dict[str, str]:
     """Read the name map from the specified CSV file.
 
@@ -164,9 +191,8 @@ def main(args):
         args.corpus_root_template).get_included_files(XmlElements.classDecl)
     output_dir = prepare_corpus_directory(args.output_directory,
                                           taxonomy_files)
-    speaker_info_provider = SpeakerInfoProvider(
-        read_name_map(args.speaker_name_map),
-        read_personal_information(args.profile_info))
+    speaker_info_provider = build_speaker_info_provider(
+        args.speaker_name_map, args.profile_info)
 
     root_file_path = str(output_dir / Path("ParlaMint-RO.xml"))
     root_builder = RootCorpusFileBuilder(root_file_path,

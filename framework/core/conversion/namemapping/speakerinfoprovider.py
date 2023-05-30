@@ -1,5 +1,8 @@
 """Defines class for providing speaker info."""
 from framework.core.conversion.namemapping.speakerinfo import SpeakerInfo
+from framework.core.conversion.namemapping.speakernameresolver import SpeakerNameResolver
+from framework.core.conversion.namemapping.speakerinforesolver import SpeakerInfoResolver
+from framework.core.conversion.namedtuples import NameCorrection
 from typing import Dict
 from typing import List
 from unidecode import unidecode
@@ -13,27 +16,21 @@ class SpeakerInfoProvider:
     EMPTY_SPEAKER = SpeakerInfo(['Necunoscut'], ['Necunoscut'],
                                 speaker_id="Necunoscut-Necunoscut")
 
-    def __init__(self, name_map: Dict[str, str],
+    def __init__(self, name_corrections: List[NameCorrection],
                  personal_info: List[SpeakerInfo]):
         """Create a new instance of the class.
 
         Parameters
         ----------
-        name_map: dict of (str, str), required
-            The dictionary mapping names as they appear in JSON transcriptions to the correct names of speakers.
+        name_corrections: list of NameCorrection, required
+            The list of name corrections that map names as they appear in JSON transcriptions to correct names of speakers.
         personal_info: list of SpeakerInfo, required
             The list with personal info of the speakers.
         """
-        self.__name_map = {self.__normalize(k): v for k, v in name_map.items()}
-        self.__personal_info = {
-            # Both first and last names are collections of multiple names
-            self.__build_personal_info_key(*item.first_name + item.last_name):
-            item
-            for item in personal_info
-        }
         self.__id_map = {}
-        self.__info_map = {}
         self.__id_translations = str.maketrans({' ': '-'})
+        self.__name_resolver = SpeakerNameResolver(name_corrections)
+        self.__info_resolver = SpeakerInfoResolver(personal_info)
 
     def get_speaker_id(self, speaker_name: str) -> str:
         """Get the speaker id from the provided full name of the speaker.
@@ -48,21 +45,9 @@ class SpeakerInfoProvider:
         speaker_id: str
             The id of the speaker.
         """
-        normalized_name = self.__normalize(speaker_name)
-        if normalized_name in self.__id_map:
-            return self.__id_map[normalized_name]
-
-        if normalized_name not in self.__name_map:
-            logging.error("Could not find name '{}' in name map dict.".format(
-                speaker_name))
-            full_name = speaker_name
-        else:
-            full_name = self.__name_map[normalized_name]
-
-        speaker_id = self.__build_speaker_id(full_name)
-        self.__id_map[normalized_name] = speaker_id
-        self.__info_map[speaker_id] = self.__get_personal_info(full_name)
-        self.__info_map[speaker_id].speaker_id = speaker_id
+        actual_name = self.get_speaker_name(speaker_name)
+        speaker_id = self.__build_speaker_id(actual_name)
+        self.__id_map[speaker_id] = actual_name
         return speaker_id
 
     def get_personal_info(self, speaker_id: str) -> dict:
@@ -80,7 +65,12 @@ class SpeakerInfoProvider:
         """ ""
         if not speaker_id.startswith('#'):
             speaker_id = '#' + speaker_id
-        return self.__info_map[speaker_id]
+        actual_name = self.__id_map[speaker_id]
+        speaker_info = self.__info_resolver.resolve(actual_name)
+        if speaker_info is not None:
+            return speaker_info
+        # TODO: Build speaker info from name
+        return SpeakerInfoProvider.EMPTY_SPEAKER
 
     def get_speaker_name(self, full_name: str) -> str:
         """Get the speaker name.
@@ -95,33 +85,11 @@ class SpeakerInfoProvider:
         speaker_name: str
             The name of the speaker.
         """
-        normalized_name = self.__normalize(full_name)
-        if normalized_name in self.__id_map:
-            return self.__name_map[normalized_name]
-        return full_name
-
-    def __get_personal_info(self, full_name: str) -> dict:
-        """Get the personal info of the person with the specified name.
-
-        Parameters
-        ----------
-        full_name: str, required
-            The full name of the person.
-
-        Returns
-        -------
-        personal_data: dict
-            The personal data.
-        """
-        key = self.__build_personal_info_key(full_name)
-
-        if key in self.__personal_info:
-            return self.__personal_info[key]
-
-        logging.error("Could not find personal info for name '%s'.", full_name)
-        info = SpeakerInfoProvider.EMPTY_SPEAKER
-        self.__personal_info[key] = info
-        return info
+        actual_name = self.__name_resolver.resolve_name(full_name)
+        if actual_name is None:
+            logging.error("Could not resolve name '%s'.", full_name)
+            return full_name
+        return actual_name
 
     def __build_personal_info_key(self, *full_name: str | List[str]) -> str:
         """Build the lookup key for personal info map.
