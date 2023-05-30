@@ -22,6 +22,6 @@ class NameCorrectionsReader:
         """
         df = pd.read_csv(file_path)
         return [
-            NameCorrection(row.name, row.correct_name)
+            NameCorrection(row.name, row.correct_name.strip())
             for row in df.itertuples()
         ]
