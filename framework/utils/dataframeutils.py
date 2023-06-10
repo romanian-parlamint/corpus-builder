@@ -7,7 +7,8 @@ import csv
 
 def save_data_frame(data_frame: pd.DataFrame,
                     file_name: str,
-                    append: bool = False):
+                    append: bool = False,
+                    index: bool = True):
     """Save the provided data frame into specified CSV file.
 
     Parameters
@@ -19,9 +20,15 @@ def save_data_frame(data_frame: pd.DataFrame,
     append: bool, optional
         If set to True the data will be appended to existing CSV file;
         otherwise the file will be overwritten.
+    index: bool, optional
+        The flag used to specify whether to write the index or not to the output file.
+        Default is 'True' which will write the index.
     """
     output_file = Path(file_name)
     if not output_file.parent.exists():
         output_file.parent.mkdir(parents=True, exist_ok=True)
     write_mode = 'a' if append else 'w'
-    data_frame.to_csv(file_name, quoting=csv.QUOTE_NONNUMERIC, mode=write_mode)
+    data_frame.to_csv(file_name,
+                      quoting=csv.QUOTE_NONNUMERIC,
+                      mode=write_mode,
+                      index=index)
