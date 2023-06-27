@@ -2,8 +2,8 @@
 from framework.core.conversion.namemapping.speakerinfo import SpeakerInfo
 from framework.core.conversion.namemapping.speakernameresolver import SpeakerNameResolver
 from framework.core.conversion.namemapping.speakerinforesolver import SpeakerInfoResolver
+from framework.core.conversion.namemapping.speakeridbuilder import SpeakerIdBuilder
 from framework.core.conversion.namedtuples import NameCorrection
-from typing import Dict
 from typing import List
 from unidecode import unidecode
 import logging
@@ -28,7 +28,7 @@ class SpeakerInfoProvider:
             The list with personal info of the speakers.
         """
         self.__id_map = {}
-        self.__id_translations = str.maketrans({' ': '-'})
+        self.__id_builder = SpeakerIdBuilder()
         self.__name_resolver = SpeakerNameResolver(name_corrections)
         self.__info_resolver = SpeakerInfoResolver(personal_info)
 
@@ -46,7 +46,7 @@ class SpeakerInfoProvider:
             The id of the speaker.
         """
         actual_name = self.get_speaker_name(speaker_name)
-        speaker_id = self.__build_speaker_id(actual_name)
+        speaker_id = self.__id_builder.build_speaker_id(actual_name)
         self.__id_map[speaker_id] = actual_name
         return speaker_id
 
@@ -109,23 +109,6 @@ class SpeakerInfoProvider:
         parts = re.split(" |-", name)
         lookup_key = '#'.join(set([p.lower() for p in parts]))
         return lookup_key
-
-    def __build_speaker_id(self, full_name: str) -> str:
-        """Build the speaker id from full name.
-
-        Parameters
-        ----------
-        full_name: str, required
-            The full name of the speaker.
-
-        Returns
-        -------
-        speaker_id: str
-            The id of the speaker.
-        """
-        canonical_id = full_name.translate(self.__id_translations)
-        canonical_id = re.sub(r"-{2,}", '-', canonical_id)
-        return "#{}".format(unidecode(canonical_id))
 
     def __normalize(self, name: str) -> str:
         """Get the nomalized form of the specified name.
