@@ -275,10 +275,11 @@ def parse_arguments() -> Namespace:
         help="The level of details to print when running.",
         choices=['debug', 'info', 'warning', 'error', 'critical'],
         default='info')
+
     return parser.parse_args()
 
 
 if __name__ == '__main__':
     args = parse_arguments()
-    configure_logging(args.log_level)
+    configure_logging(args.log_level, 'build_corpus.log')
     main(args)
