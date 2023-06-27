@@ -157,15 +157,15 @@ def read_name_map(file_path: str) -> Dict[str, str]:
 
 
 def prepare_corpus_directory(corpus_directory: str,
-                             taxonomy_files: List[Path]) -> Path:
-    """Create the corpus directory and copy taxonomy files.
+                             included_files: List[Path]) -> Path:
+    """Create the corpus directory and copy the included files.
 
     Parameters
     ----------
     corpus_directory: str, required
         The path of the corpus directory.
-    taxonomy_files: list of Path, required
-        The paths of the taxonomy files to copy to corpus directory.
+    included_files: list of Path, required
+        The paths of the included files to copy to corpus directory.
 
     Returns
     -------
@@ -176,11 +176,11 @@ def prepare_corpus_directory(corpus_directory: str,
     corpus_dir = Path(corpus_directory)
     corpus_dir.mkdir(exist_ok=True, parents=True)
 
-    for taxonomy_file in taxonomy_files:
-        logging.info("Copying taxonomy file %s to %s.", taxonomy_file,
+    for included_file in included_files:
+        logging.info("Copying taxonomy file %s to %s.", included_file,
                      corpus_directory)
-        contents = taxonomy_file.read_text()
-        dest_file = corpus_dir / taxonomy_file.name
+        contents = included_file.read_text()
+        dest_file = corpus_dir / included_file.name
         dest_file.write_text(contents)
     return corpus_dir
 
