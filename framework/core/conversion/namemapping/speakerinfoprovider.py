@@ -5,9 +5,7 @@ from framework.core.conversion.namemapping.speakerinforesolver import SpeakerInf
 from framework.core.conversion.namemapping.speakeridbuilder import SpeakerIdBuilder
 from framework.core.conversion.namedtuples import NameCorrection
 from typing import List
-from unidecode import unidecode
 import logging
-import re
 
 
 class SpeakerInfoProvider:
@@ -90,37 +88,3 @@ class SpeakerInfoProvider:
             logging.error("Could not resolve name '%s'.", full_name)
             return full_name
         return actual_name
-
-    def __build_personal_info_key(self, *full_name: str | List[str]) -> str:
-        """Build the lookup key for personal info map.
-
-        Parameters
-        ----------
-        full_name: str or list of str, required
-            The full name of the person.
-
-        Returns
-        -------
-        lookup_key: str
-            The lookup key built from person name.
-        """
-        name = ' '.join(full_name)
-        name = unidecode(name)
-        parts = re.split(" |-", name)
-        lookup_key = '#'.join(set([p.lower() for p in parts]))
-        return lookup_key
-
-    def __normalize(self, name: str) -> str:
-        """Get the nomalized form of the specified name.
-
-        Parameters
-        ----------
-        name: str, required
-            The name to normalize.
-
-        Returns
-        -------
-        canonical_name: str
-            The normalized name.
-        """
-        return unidecode(name.lower().strip())
