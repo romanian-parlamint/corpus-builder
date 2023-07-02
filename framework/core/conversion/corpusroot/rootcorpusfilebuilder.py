@@ -26,6 +26,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
                  file_path: str,
                  template_file: str,
                  speaker_info_provider: SpeakerInfoProvider,
+                 person_list_manipulator: PersonListManipulator,
                  organizations_list_reader: OrganizationsListReader,
                  is_sample: bool,
                  append: bool = False):
@@ -39,6 +40,8 @@ class RootCorpusFileBuilder(XmlDataManipulator):
             The path of the corpus root template file.
         speaker_info_provider: SpeakerInfoProvider, required
             An instance of SpeakerInfoProvider used for filling speaker info.
+        person_list_manipulator: PersonListManipulator, required
+            An instance of PersonListManipulator used for updating the list of speakers.
         organizations_list_reader: OrganizationsListReader, required
             An instance of OrganizationsListReader used for readin organization data.
         is_sample: bool, required
@@ -50,7 +53,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
         XmlDataManipulator.__init__(self, root_file)
         self.__file_path = file_path
         self.__speaker_info_provider = speaker_info_provider
-        self.__person_list = PersonListManipulator(self.xml_root)
+        self.__person_list = person_list_manipulator
         self.__org_list = organizations_list_reader
         self.__update_corpus_title(is_sample)
 

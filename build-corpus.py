@@ -3,8 +3,10 @@
 from argparse import Namespace, ArgumentParser
 from ast import literal_eval
 from framework.core.conversion.corpusroot.legislativetermsreader import LegislativeTermsReader
+from framework.core.conversion.corpusroot.personlistmanipulator import PersonListManipulator
 from framework.core.conversion.corpusroot.organizationslistreader import OrganizationsListReader
 from framework.core.conversion.corpusroot.rootcorpusfilebuilder import RootCorpusFileBuilder
+from framework.core.conversion.corpusroot.sessionspeakersreader import SessionSpeakersReader
 from framework.core.conversion.jsontoxml import SessionTranscriptConverter
 from framework.core.conversion.namemapping.namecorrectionsreader import NameCorrectionsReader
 from framework.core.conversion.namemapping.speakerinfo import SpeakerInfo
@@ -192,6 +194,7 @@ def main(args):
         args.corpus_root_template).get_included_files(XmlElements.classDecl)
     participant_description_files = XsiIncludeElementsReader(
         args.corpus_root_template).get_included_files(XmlElements.particDesc)
+
     output_dir = prepare_corpus_directory(
         args.output_directory, taxonomy_files + participant_description_files)
     speaker_info_provider = build_speaker_info_provider(
@@ -199,10 +202,13 @@ def main(args):
 
     org_list_reader = OrganizationsListReader(
         str(output_dir / participant_description_files[0].name))
+    pers_list_manipulator = PersonListManipulator(
+        str(output_dir / participant_description_files[1].name))
     root_file_path = str(output_dir / Path("ParlaMint-RO.xml"))
     root_builder = RootCorpusFileBuilder(root_file_path,
                                          args.corpus_root_template,
                                          speaker_info_provider,
+                                         pers_list_manipulator,
                                          org_list_reader, args.build_sample)
     total, processed, failed = 0, 0, 0
     sample_size = args.sample_size if args.build_sample else None

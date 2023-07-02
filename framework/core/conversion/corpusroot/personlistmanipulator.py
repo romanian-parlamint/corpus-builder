@@ -1,25 +1,26 @@
 """Class for manipulating person elements."""
 from framework.core.conversion.namedtuples import Event, PersonalInformation
-from framework.core.xmlutils import XmlElements, XmlAttributes
+from framework.core.xmlutils import XmlElements
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlDataManipulator
 from lxml import etree
 from typing import List
 import logging
 
 
-class PersonListManipulator:
+class PersonListManipulator(XmlDataManipulator):
     """Hadles updates and queries on the `listPerson` element contents."""
 
-    def __init__(self, xml_root: etree.Element):
+    def __init__(self, xml_file: str):
         """Create a new instance of the class.
 
         Parameters
         ----------
-        xml_root: etree.Element, required
-            The root node of the corpus root file.
+        xml_file: str, required
+            The path of the XML file.
         """
-        self.__xml_root = xml_root
-        self.__persons_list = next(
-            xml_root.iterdescendants(tag=XmlElements.listPerson))
+        XmlDataManipulator.__init__(self, xml_file)
+        self.__persons_list = self.xml_root
 
     def add_or_update_person(self,
                              person_id: str,
@@ -50,6 +51,7 @@ class PersonListManipulator:
         self.__update_affiliation(person, legislative_term)
         if executive_term is not None:
             self.__update_affiliation(person, executive_term)
+        self.save_changes()
 
     def __sort_persons(self):
         """Sort person list by the value of id attribute."""
