@@ -3,6 +3,7 @@ from framework.core.conversion.namemapping.speakerinfo import SpeakerInfo
 from framework.core.conversion.namemapping.speakernameresolver import SpeakerNameResolver
 from framework.core.conversion.namemapping.speakerinforesolver import SpeakerInfoResolver
 from framework.core.conversion.namemapping.speakeridbuilder import SpeakerIdBuilder
+from framework.core.conversion.namemapping.profileinfobuilder import ProfileInfoBuilder
 from framework.core.conversion.namedtuples import NameCorrection
 from typing import List
 import logging
@@ -10,9 +11,6 @@ import logging
 
 class SpeakerInfoProvider:
     """Provides speaker info."""
-
-    EMPTY_SPEAKER = SpeakerInfo(['Necunoscut'], ['Necunoscut'],
-                                speaker_id="Necunoscut-Necunoscut")
 
     def __init__(self, name_corrections: List[NameCorrection],
                  personal_info: List[SpeakerInfo]):
@@ -62,13 +60,13 @@ class SpeakerInfoProvider:
             The personal info.
         """ ""
         if not speaker_id.startswith('#'):
-            speaker_id = '#' + speaker_id
+            speaker_id = f'#{speaker_id}'
         actual_name = self.__id_map[speaker_id]
         speaker_info = self.__info_resolver.resolve(actual_name)
         if speaker_info is not None:
             return speaker_info
-        # TODO: Build speaker info from name
-        return SpeakerInfoProvider.EMPTY_SPEAKER
+        builder = ProfileInfoBuilder()
+        return builder.build_profile_info(actual_name)
 
     def get_speaker_name(self, full_name: str) -> str:
         """Get the speaker name.
