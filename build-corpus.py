@@ -177,7 +177,7 @@ def prepare_corpus_directory(corpus_directory: str,
     corpus_dir.mkdir(exist_ok=True, parents=True)
 
     for included_file in included_files:
-        logging.info("Copying taxonomy file %s to %s.", included_file,
+        logging.info("Copying included file %s to %s.", included_file,
                      corpus_directory)
         contents = included_file.read_text()
         dest_file = corpus_dir / included_file.name
@@ -189,8 +189,10 @@ def main(args):
     """Entry point of the module."""
     taxonomy_files = XsiIncludeElementsReader(
         args.corpus_root_template).get_included_files(XmlElements.classDecl)
-    output_dir = prepare_corpus_directory(args.output_directory,
-                                          taxonomy_files)
+    participant_description_files = XsiIncludeElementsReader(
+        args.corpus_root_template).get_included_files(XmlElements.particDesc)
+    output_dir = prepare_corpus_directory(
+        args.output_directory, taxonomy_files + participant_description_files)
     speaker_info_provider = build_speaker_info_provider(
         args.speaker_name_map, args.profile_info)
 

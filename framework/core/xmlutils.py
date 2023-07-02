@@ -38,6 +38,7 @@ class XmlElements:
     org = '{http://www.tei-c.org/ns/1.0}org'
     orgName = '{http://www.tei-c.org/ns/1.0}orgName'
     p = '{http://www.tei-c.org/ns/1.0}p'
+    particDesc = '{http://www.tei-c.org/ns/1.0}particDesc'
     pc = '{http://www.tei-c.org/ns/1.0}pc'
     persName = '{http://www.tei-c.org/ns/1.0}persName'
     person = '{http://www.tei-c.org/ns/1.0}person'
