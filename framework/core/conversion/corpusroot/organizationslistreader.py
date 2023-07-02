@@ -1,7 +1,10 @@
-"""Class for manipulating the list of organizations."""
+"""Class for readint the list of organizations and their data."""
 from datetime import date
 from framework.core.conversion.namedtuples import Event
-from framework.core.xmlutils import XmlElements, XmlAttributes, OrganizationRoles
+from framework.core.xmlutils import OrganizationRoles
+from framework.core.xmlutils import XmlAttributes
+from framework.core.xmlutils import XmlDataReader
+from framework.core.xmlutils import XmlElements
 from lxml import etree
 from typing import Generator
 from typing import List
@@ -9,18 +12,18 @@ from typing import Tuple
 import logging
 
 
-class OrganizationsListManipulator:
+class OrganizationsListReader(XmlDataReader):
     """Handles queries on the `listOrg` element contents."""
 
-    def __init__(self, xml_root: etree.Element):
+    def __init__(self, xml_file: str):
         """Create a new instance of the class.
 
         Parameters
         ----------
-        xml_root: etree.Element, required
-            The root node of the corpus root file.
+        xml_file: str, required
+            The path of the XML file.
         """
-        self.__xml_root = xml_root
+        XmlDataReader.__init__(self, xml_file)
         self.__parliament_org = None
         self.__legislative_terms = None
         self.__government_org = None
@@ -174,7 +177,7 @@ class OrganizationsListManipulator:
         organization: etree.Element
             The organization with the specified role; None if not found.
         """
-        for org in self.__xml_root.iterdescendants(tag=XmlElements.org):
+        for org in self.xml_root.iterdescendants(tag=XmlElements.org):
             if org.get(XmlAttributes.role) == role:
                 return org
         return None

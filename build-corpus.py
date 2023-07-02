@@ -3,6 +3,7 @@
 from argparse import Namespace, ArgumentParser
 from ast import literal_eval
 from framework.core.conversion.corpusroot.legislativetermsreader import LegislativeTermsReader
+from framework.core.conversion.corpusroot.organizationslistreader import OrganizationsListReader
 from framework.core.conversion.corpusroot.rootcorpusfilebuilder import RootCorpusFileBuilder
 from framework.core.conversion.jsontoxml import SessionTranscriptConverter
 from framework.core.conversion.namemapping.namecorrectionsreader import NameCorrectionsReader
@@ -196,11 +197,13 @@ def main(args):
     speaker_info_provider = build_speaker_info_provider(
         args.speaker_name_map, args.profile_info)
 
+    org_list_reader = OrganizationsListReader(
+        str(output_dir / participant_description_files[0].name))
     root_file_path = str(output_dir / Path("ParlaMint-RO.xml"))
     root_builder = RootCorpusFileBuilder(root_file_path,
                                          args.corpus_root_template,
                                          speaker_info_provider,
-                                         args.build_sample)
+                                         org_list_reader, args.build_sample)
     total, processed, failed = 0, 0, 0
     sample_size = args.sample_size if args.build_sample else None
     legislative_terms = LegislativeTermsReader(

@@ -2,7 +2,7 @@
 from babel.dates import format_date
 from datetime import datetime
 from framework.core.constants import SAMPLE_TAG
-from framework.core.conversion.corpusroot.organizationslistmanipulator import OrganizationsListManipulator
+from framework.core.conversion.corpusroot.organizationslistreader import OrganizationsListReader
 from framework.core.conversion.corpusroot.personlistmanipulator import PersonListManipulator
 from framework.core.conversion.corpusroot.sessionspeakersreader import SessionSpeakersReader
 from framework.core.conversion.namedtuples import PersonalInformation
@@ -26,6 +26,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
                  file_path: str,
                  template_file: str,
                  speaker_info_provider: SpeakerInfoProvider,
+                 organizations_list_reader: OrganizationsListReader,
                  is_sample: bool,
                  append: bool = False):
         """Create a new instance of the class.
@@ -38,6 +39,8 @@ class RootCorpusFileBuilder(XmlDataManipulator):
             The path of the corpus root template file.
         speaker_info_provider: SpeakerInfoProvider, required
             An instance of SpeakerInfoProvider used for filling speaker info.
+        organizations_list_reader: OrganizationsListReader, required
+            An instance of OrganizationsListReader used for readin organization data.
         is_sample: bool, required
             A flag indicating whether the root file is part of a sample or full corpus.
         append: bool, optional
@@ -48,7 +51,7 @@ class RootCorpusFileBuilder(XmlDataManipulator):
         self.__file_path = file_path
         self.__speaker_info_provider = speaker_info_provider
         self.__person_list = PersonListManipulator(self.xml_root)
-        self.__org_list = OrganizationsListManipulator(self.xml_root)
+        self.__org_list = organizations_list_reader
         self.__update_corpus_title(is_sample)
 
     def add_corpus_file(self, corpus_file: str):
