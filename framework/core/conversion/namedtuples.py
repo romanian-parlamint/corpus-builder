@@ -11,3 +11,5 @@ PersonalInformation = namedtuple(
 LegislativeTerm = namedtuple(
     'LegislativeTerm',
     ['term_id', 'number', 'start_date', 'end_date', 'description'])
+
+ParliamentaryGroup = namedtuple('ParliamentaryGroup', ['Acronym', 'Name'])
