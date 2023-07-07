@@ -13,3 +13,7 @@ LegislativeTerm = namedtuple(
     ['term_id', 'number', 'start_date', 'end_date', 'description'])
 
 ParliamentaryGroup = namedtuple('ParliamentaryGroup', ['Acronym', 'Name'])
+
+CoalitionOppositionRelation = namedtuple(
+    'CoalitionOppositionRelation',
+    ['start_date', 'end_date', 'coalition', 'opposition'])
