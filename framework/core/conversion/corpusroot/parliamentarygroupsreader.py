@@ -11,7 +11,7 @@ class ParliamentaryGroupsReader:
     def read(
         self,
         data_directory: str,
-        file_name_template: str = 'parliamentary-groups.csv'
+        file_name_pattern: str = 'parliamentary-groups.csv'
     ) -> List[ParliamentaryGroup]:
         """Read parliamentary groups from the specified directory.
 
@@ -19,8 +19,8 @@ class ParliamentaryGroupsReader:
         ----------
         data_directory: str, required
             The path of the directory containing CSV files with parliamentary groups.
-        file_name_template: str, optional
-            The template of the file names containing parliamentary groups.
+        file_name_pattern: str, optional
+            The pattern of the file names containing parliamentary groups.
 
         Returns
         -------
@@ -29,7 +29,7 @@ class ParliamentaryGroupsReader:
         """
         data_dir = Path(data_directory)
         parla_groups = set()
-        for f in data_dir.glob(f'**/{file_name_template}'):
+        for f in data_dir.glob(f'**/{file_name_pattern}'):
             df = pd.read_csv(str(f))
             for row in df.itertuples():
                 grp = ParliamentaryGroup(row.Acronym, row.Name)
